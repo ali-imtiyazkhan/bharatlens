@@ -73,7 +73,7 @@ export default function ImmersivePage() {
 
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '32px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10 }}>
         <button 
-          onClick={() => router.back()} 
+          onClick={() => router.push('/')} 
           style={{ 
             background: 'rgba(255,255,255,0.05)', 
             backdropFilter: 'blur(20px)', 
@@ -89,7 +89,7 @@ export default function ImmersivePage() {
             gap: 10
           }}
         >
-          <span>←</span> Back to Map
+          <span>←</span> Back to Home
         </button>
 
         <div style={{ textAlign: 'right' }}>

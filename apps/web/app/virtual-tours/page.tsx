@@ -121,7 +121,7 @@ export default function VirtualToursPage() {
               <h2 style={{ fontSize: 32, fontWeight: 900 }}>360° Immersive <span style={{ color: '#c9a84c' }}>Tours</span></h2>
               <p style={{ color: 'rgba(255,255,255,0.4)', marginTop: 8 }}>Virtually teleport inside India&apos;s most iconic historical monuments.</p>
            </div>
-           <Link href="/explore" style={{ color: '#c9a84c', fontSize: 12, fontWeight: 800, textDecoration: 'none', borderBottom: '1px solid #c9a84c', paddingBottom: 4 }}>VIEW ALL DESTINATIONS</Link>
+           <Link href="/dashboard" style={{ color: '#c9a84c', fontSize: 12, fontWeight: 800, textDecoration: 'none', borderBottom: '1px solid #c9a84c', paddingBottom: 4 }}>VIEW DASHBOARD</Link>
         </div>
 
         {loading ? (

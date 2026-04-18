@@ -81,7 +81,7 @@ export default function ARCameraPage() {
       
       {/* Top Navbar */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '24px 32px', zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link href="/explore" style={{ color: '#fff', textDecoration: 'none', fontSize: 13, fontWeight: 700, fontFamily: "'Outfit', sans-serif", background: 'rgba(0,0,0,0.5)', padding: '8px 16px', borderRadius: 20, backdropFilter: 'blur(10px)' }}>
+        <Link href="/" style={{ color: '#fff', textDecoration: 'none', fontSize: 13, fontWeight: 700, fontFamily: "'Outfit', sans-serif", background: 'rgba(0,0,0,0.5)', padding: '8px 16px', borderRadius: 20, backdropFilter: 'blur(10px)' }}>
           ← Back
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -212,20 +212,6 @@ export default function ARCameraPage() {
                 </button>
               )}
               
-              {result.identification && (
-                <Link 
-                  href={`/explore/${result.identification.toLowerCase().replace(/\s+/g, '-')}`}
-                  style={{ 
-                    flex: 1, background: '#c9a84c', border: 'none', 
-                    padding: '12px', borderRadius: 12, color: '#000', cursor: 'pointer', 
-                    fontFamily: "'Outfit', sans-serif", fontWeight: 900, textDecoration: 'none',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12,
-                    letterSpacing: '0.05em'
-                  }}
-                >
-                  DIVE DEEPER ✦
-                </Link>
-              )}
             </div>
 
             <button onClick={() => { setResult(null); stopSpeaking(); }} style={{ marginTop: 8, width: '100%', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', padding: 10, borderRadius: 12, color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: 11 }}>Dismiss</button>

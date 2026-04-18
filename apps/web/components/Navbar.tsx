@@ -14,7 +14,7 @@ export default function Navbar() {
 
   const mainLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Explore', path: '/explore' },
+    { name: 'Dashboard', path: '/dashboard' },
     { name: 'AI Planner', path: '/planner' },
   ];
 

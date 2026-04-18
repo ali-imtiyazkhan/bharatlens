@@ -44,7 +44,7 @@ export default function DashboardPage() {
         <Link href="/" className="nav-brand">BHARAT<br />LENS</Link>
         <div className="nav-links-center">
           <Link href="/dashboard" style={{ color: '#c9a84c' }}>Dashboard</Link>
-          <Link href="/explore">Destinations</Link>
+          <Link href="/">Home</Link>
           <Link href="/planner">AI Planner</Link>
           <Link href="/rewards">Rewards</Link>
         </div>

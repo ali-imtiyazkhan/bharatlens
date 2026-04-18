@@ -9,7 +9,7 @@ export default function ToursPage() {
       <nav className="navbar">
         <Link href="/" className="nav-brand">BHARAT<br />LENS</Link>
         <div className="nav-links-center">
-          <Link href="/explore">Destinations</Link>
+          <Link href="/dashboard">Dashboard</Link>
           <Link href="/virtual-tours" style={{ color: '#e8e4dc' }}>Virtual Tours</Link>
           <Link href="/planner">AI Planner</Link>
           <Link href="/blog">Blog</Link>

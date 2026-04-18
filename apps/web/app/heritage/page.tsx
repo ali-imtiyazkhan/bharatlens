@@ -66,8 +66,8 @@ export default function HeritageVoicesPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', fontFamily: "'Outfit', sans-serif" }}>
       <nav style={{ padding: '24px 64px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <Link href="/explore" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, fontWeight: 700, padding: '8px 16px', background: 'rgba(255,255,255,0.05)', borderRadius: 20 }}>
-          ← Back to Explore
+        <Link href="/" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, fontWeight: 700, padding: '8px 16px', background: 'rgba(255,255,255,0.05)', borderRadius: 20 }}>
+          ← Back to Home
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
           <div style={{ color: '#c9a84c', fontSize: 13, fontWeight: 800, letterSpacing: '0.1em' }}>HERITAGE VOICES</div>

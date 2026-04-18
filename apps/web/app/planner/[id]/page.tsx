@@ -71,7 +71,7 @@ export default function SharedItineraryPage() {
           BHARAT<br />LENS
         </Link>
         <div className="nav-links-center">
-          <Link href="/explore">Destinations</Link>
+          <Link href="/dashboard">Dashboard</Link>
           <Link href="/tours">Virtual Tours</Link>
           <Link href="/planner">AI Planner</Link>
         </div>

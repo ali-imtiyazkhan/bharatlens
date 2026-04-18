@@ -136,7 +136,7 @@ export default function DiscoverPage() {
           BHARAT<br />LENS
         </Link>
         <div className="nav-links-center">
-          <Link href="/explore">Destinations</Link>
+          <Link href="/dashboard">Dashboard</Link>
           <Link href="/virtual-tours">Virtual Tours</Link>
           <Link href="/planner">AI Planner</Link>
           <Link href="/blog">Blog</Link>
