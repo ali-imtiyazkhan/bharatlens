@@ -78,7 +78,7 @@ Respond ONLY with valid JSON matching this exact structure (no markdown, no expl
 
     const plan: ItineraryPlan = await askGemini(prompt);
 
-    let savedItinerary = null;
+    let savedItinerary: any = null;
     try {
       savedItinerary = await prisma.itinerary.create({
         data: {

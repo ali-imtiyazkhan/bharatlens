@@ -128,7 +128,7 @@ router.post('/sites', async (req, res) => {
   try {
     const { search, category, state, era } = req.body;
 
-    let constraints = [];
+    let constraints: string[] = [];
     if (search && search.trim() !== '') constraints.push(`match the search query: "${search}"`);
     if (category && category !== 'All') constraints.push(`belong to the category: "${category}" (if UNESCO, they must be actual UNESCO sites)`);
     if (state && state !== 'All States') constraints.push(`be located in the state of ${state}`);
