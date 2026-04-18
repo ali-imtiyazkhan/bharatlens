@@ -35,6 +35,9 @@ importers:
       helmet:
         specifier: ^7.1.0
         version: 7.2.0
+      openai:
+        specifier: ^6.34.0
+        version: 6.34.0(zod@3.25.76)
       zod:
         specifier: ^3.22.4
         version: 3.25.76
@@ -1676,6 +1679,21 @@ packages:
     dependencies:
       wrappy: 1.0.2
     dev: true
+
+  /openai@6.34.0(zod@3.25.76):
+    resolution: {integrity: sha512-yEr2jdGf4tVFYG6ohmr3pF6VJuveP0EA/sS8TBx+4Eq5NT10alu5zg2dmxMXMgqpihRDQlFGpRt2XwsGj+Fyxw==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.25 || ^4.0
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
+    dependencies:
+      zod: 3.25.76
+    dev: false
 
   /optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
