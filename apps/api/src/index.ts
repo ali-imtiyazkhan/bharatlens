@@ -41,9 +41,24 @@ io.on('connection', (socket) => {
     console.log(`User ${userId} connected for real-time chat`);
   }
 
+  // Private DM
   socket.on('send_message', (data) => {
-    // data: { receiverId, text, senderId }
     io.to(data.receiverId).emit('receive_message', data);
+  });
+
+  // Community group chat
+  socket.on('join_community', (communityId: string) => {
+    socket.join(`community:${communityId}`);
+    console.log(`User ${userId} joined community room ${communityId}`);
+  });
+
+  socket.on('leave_community', (communityId: string) => {
+    socket.leave(`community:${communityId}`);
+  });
+
+  socket.on('community_message', (data) => {
+    // Broadcast to everyone in the community room (including sender)
+    io.to(`community:${data.communityId}`).emit('new_community_message', data);
   });
 
   socket.on('disconnect', () => {

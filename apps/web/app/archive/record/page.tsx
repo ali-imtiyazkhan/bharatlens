@@ -10,6 +10,8 @@ export default function RecordArchivePage() {
   const [time, setTime] = useState(0);
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [authorInfo, setAuthorInfo] = useState({ name: '', age: '' });
+  const [submitted, setSubmitted] = useState(false);
   
   const timerRef = useRef<any>(null);
 
@@ -56,6 +58,33 @@ export default function RecordArchivePage() {
       });
       const data = await res.json();
       setResult(data);
+    } catch (e) {
+      console.error(e);
+    }
+    setProcessing(false);
+  };
+
+  const handleSubmit = async () => {
+    const stored = localStorage.getItem('user');
+    if (!stored || !result) return;
+    const user = JSON.parse(stored);
+
+    setProcessing(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/archive/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          aideId: user.id,
+          authorName: authorInfo.name,
+          authorAge: authorInfo.age,
+          siteName: result.location,
+          resultData: result
+        })
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -129,46 +158,59 @@ export default function RecordArchivePage() {
             </motion.div>
           )}
 
-          {result && (
+          {result && !submitted && (
             <motion.div key="result" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ width: '100%', maxWidth: 500 }}>
               <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: 32 }}>
                 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-                  <div style={{ width: 48, height: 48, background: 'rgba(74,222,128,0.1)', borderRadius: '50%', color: '#4ade80', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>✓</div>
+                <h2 style={{ fontSize: 24, fontWeight: 900, marginBottom: 24 }}>Story Details</h2>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
                   <div>
-                    <h2 style={{ fontSize: 20, fontWeight: 800 }}>Story Archived!</h2>
-                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>Available immediately to tourists.</div>
+                    <label style={{ fontSize: 10, fontWeight: 800, color: '#3b82f6', textTransform: 'uppercase', marginBottom: 8, display: 'block' }}>Elder's Name</label>
+                    <input 
+                      placeholder="Who is telling the story?"
+                      value={authorInfo.name}
+                      onChange={e => setAuthorInfo({...authorInfo, name: e.target.value})}
+                      style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 14, color: '#fff', outline: 'none' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 10, fontWeight: 800, color: '#3b82f6', textTransform: 'uppercase', marginBottom: 8, display: 'block' }}>Approximate Age</label>
+                    <input 
+                      type="number"
+                      placeholder="e.g. 82"
+                      value={authorInfo.age}
+                      onChange={e => setAuthorInfo({...authorInfo, age: e.target.value})}
+                      style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 14, color: '#fff', outline: 'none' }}
+                    />
                   </div>
                 </div>
 
                 <div style={{ background: 'rgba(0,0,0,0.4)', padding: 16, borderRadius: 12, marginBottom: 24 }}>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: 8 }}>AI Translation</div>
-                  <p style={{ fontSize: 14, lineHeight: 1.6 }}>"{result.translation}"</p>
+                  <div style={{ fontSize: 11, color: 'rgba(59,130,246,0.6)', fontWeight: 800, textTransform: 'uppercase', marginBottom: 8 }}>AI Summary: "{result.title}"</div>
+                  <p style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.8)' }}>{result.translation}</p>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 32 }}>
-                   <div style={{ background: 'rgba(255,255,255,0.05)', padding: 12, borderRadius: 8 }}>
-                     <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>ERA</div>
-                     <div style={{ fontSize: 14, fontWeight: 800, color: '#60a5fa' }}>{result.era}</div>
-                   </div>
-                   <div style={{ background: 'rgba(255,255,255,0.05)', padding: 12, borderRadius: 8 }}>
-                     <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>CATEGORY</div>
-                     <div style={{ fontSize: 14, fontWeight: 800, color: '#facc15' }}>{result.category}</div>
-                   </div>
-                </div>
-
-                <div style={{ borderTop: '1px dashed rgba(255,255,255,0.1)', paddingTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>EARNED</div>
-                    <div style={{ fontSize: 24, fontWeight: 800, color: '#4ade80' }}>+70 <span style={{ fontSize: 14 }}>HP</span></div>
-                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>20 You • 50 Elder</div>
-                  </div>
-                  <button onClick={() => { setResult(null); setTime(0); }} style={{ background: '#3b82f6', color: '#fff', border: 'none', padding: '12px 24px', borderRadius: 8, fontWeight: 800, cursor: 'pointer' }}>
-                    Record Another
-                  </button>
-                </div>
-
+                <button 
+                  onClick={handleSubmit}
+                  disabled={!authorInfo.name || !authorInfo.age}
+                  style={{ width: '100%', background: '#3b82f6', color: '#fff', border: 'none', padding: '16px', borderRadius: 16, fontWeight: 900, cursor: (authorInfo.name && authorInfo.age) ? 'pointer' : 'not-allowed', opacity: (authorInfo.name && authorInfo.age) ? 1 : 0.5 }}
+                >
+                  Confirm & Archive Story
+                </button>
               </div>
+            </motion.div>
+          )}
+
+          {submitted && (
+            <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: 'center' }}>
+               <div style={{ width: 80, height: 80, background: 'rgba(74,222,128,0.1)', color: '#4ade80', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, margin: '0 auto 24px auto' }}>✓</div>
+               <h2 style={{ fontSize: 32, fontWeight: 900, marginBottom: 12 }}>Hero Status Earned!</h2>
+               <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 32 }}>The story is now part of the Living Archive. <br/>You earned <strong>70 HP</strong>.</p>
+               <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+                 <button onClick={() => window.location.href = '/archive'} style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', padding: '12px 24px', borderRadius: 12, fontWeight: 700, cursor: 'pointer' }}>View Archive</button>
+                 <button onClick={() => { setSubmitted(false); setResult(null); setAuthorInfo({name:'', age:''}); }} style={{ background: '#3b82f6', color: '#fff', border: 'none', padding: '12px 24px', borderRadius: 12, fontWeight: 800, cursor: 'pointer' }}>Record Another</button>
+               </div>
             </motion.div>
           )}
         </AnimatePresence>

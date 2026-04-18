@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../components/Navbar';
@@ -36,6 +36,24 @@ const localStories = [
 
 export default function LivingArchivePage() {
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [stories, setStories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStories();
+  }, []);
+
+  const fetchStories = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/archive/list`);
+      const data = await res.json();
+      setStories(data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="page" style={{ background: 'transparent' }}>
@@ -66,49 +84,57 @@ export default function LivingArchivePage() {
         <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', gap: 24 }}>
           <div style={{ fontSize: 12, fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Stories Nearby</div>
           
-          {localStories.map((story) => (
-            <motion.div 
-              key={story.id} 
-              initial={{ opacity: 0, x: 20 }} 
-              animate={{ opacity: 1, x: 0 }}
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 20, padding: 24, transition: 'all 0.3s' }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
-                <div>
-                  <h3 style={{ fontSize: 20, fontWeight: 800, color: '#e8e4dc', marginBottom: 4 }}>{story.title}</h3>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
-                    Narrated by <strong>{story.author} ({story.age})</strong>
+          {loading ? (
+            <div style={{ color: '#3b82f6' }}>Unearthing oral histories...</div>
+          ) : stories.length === 0 ? (
+            <div style={{ color: 'rgba(255,255,255,0.3)', textAlign: 'center', padding: 48, border: '1px dashed rgba(255,255,255,0.05)', borderRadius: 20 }}>
+              No stories archived yet. Be the first to record one!
+            </div>
+          ) : (
+            stories.map((story) => (
+              <motion.div 
+                key={story.id} 
+                initial={{ opacity: 0, x: 20 }} 
+                animate={{ opacity: 1, x: 0 }}
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 20, padding: 24, transition: 'all 0.3s' }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                  <div>
+                    <h3 style={{ fontSize: 20, fontWeight: 800, color: '#e8e4dc', marginBottom: 4 }}>{story.title}</h3>
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
+                      Narrated by <strong>{story.authorName} ({story.authorAge})</strong>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(59,130,246,0.2)', color: '#60a5fa', padding: '4px 8px', borderRadius: 4 }}>{story.category}</span>
+                    <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(255,255,255,0.1)', color: '#fff', padding: '4px 8px', borderRadius: 4 }}>{story.era}</span>
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(59,130,246,0.2)', color: '#60a5fa', padding: '4px 8px', borderRadius: 4 }}>{story.category}</span>
-                  <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(255,255,255,0.1)', color: '#fff', padding: '4px 8px', borderRadius: 4 }}>{story.era}</span>
-                </div>
-              </div>
 
-              {playingId === story.id && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} style={{ overflow: 'hidden', marginBottom: 16 }}>
-                  <div style={{ background: 'rgba(0,0,0,0.4)', padding: 16, borderRadius: 12, borderLeft: '3px solid #3b82f6', fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.8)' }}>
-                    <div style={{ fontSize: 10, color: '#3b82f6', fontWeight: 800, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI Translated from {story.language}</div>
-                    "{story.transcript}"
+                {playingId === story.id && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} style={{ overflow: 'hidden', marginBottom: 16 }}>
+                    <div style={{ background: 'rgba(0,0,0,0.4)', padding: 16, borderRadius: 12, borderLeft: '3px solid #3b82f6', fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.8)' }}>
+                      <div style={{ fontSize: 10, color: '#3b82f6', fontWeight: 800, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI Translated from {story.language}</div>
+                      "{story.transcript}"
+                    </div>
+                  </motion.div>
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
+                  <button 
+                    onClick={() => setPlayingId(playingId === story.id ? null : story.id)}
+                    style={{ background: playingId === story.id ? 'rgba(255,255,255,0.1)' : '#fff', color: playingId === story.id ? '#fff' : '#000', border: 'none', padding: '10px 20px', borderRadius: 8, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
+                  >
+                    {playingId === story.id ? '⏸ Pause' : '▶ Play Original Audio'}
+                  </button>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    📍 {story.siteName}
                   </div>
-                </motion.div>
-              )}
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
-                <button 
-                  onClick={() => setPlayingId(playingId === story.id ? null : story.id)}
-                  style={{ background: playingId === story.id ? 'rgba(255,255,255,0.1)' : '#fff', color: playingId === story.id ? '#fff' : '#000', border: 'none', padding: '10px 20px', borderRadius: 8, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
-                >
-                  {playingId === story.id ? '⏸ Pause' : '▶ Play Original Audio'}
-                </button>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  📍 {story.site}
                 </div>
-              </div>
 
-            </motion.div>
-          ))}
+              </motion.div>
+            ))
+          )}
         </div>
 
       </main>

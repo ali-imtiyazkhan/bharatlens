@@ -8,7 +8,8 @@ router.get('/discover', async (req, res) => {
   try {
     const communities = await prisma.community.findMany({
       include: {
-        _count: { select: { members: true } }
+        _count: { select: { members: true } },
+        members: { select: { userId: true } }
       }
     });
     return res.json(communities);
@@ -17,7 +18,6 @@ router.get('/discover', async (req, res) => {
   }
 });
 
-// POST /api/communities/create
 router.post('/create', async (req, res) => {
   const { name, description, interest, creatorId } = req.body;
   try {
@@ -89,6 +89,54 @@ router.post('/manage-request', async (req, res) => {
     return res.json({ success: true, message: `Request ${status.toLowerCase()}` });
   } catch (error) {
     return res.status(500).json({ error: 'Failed to manage request' });
+  }
+});
+
+// GET /api/communities/:id - Get single community details
+router.get('/:id', async (req, res) => {
+  try {
+    const community = await prisma.community.findUnique({
+      where: { id: req.params.id },
+      include: {
+        _count: { select: { members: true } },
+        members: { include: { user: { select: { id: true, name: true, username: true, avatarUrl: true } } } }
+      }
+    });
+    if (!community) return res.status(404).json({ error: 'Community not found' });
+    return res.json(community);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch community' });
+  }
+});
+
+// GET /api/communities/:id/messages - Get community chat history
+router.get('/:id/messages', async (req, res) => {
+  try {
+    const messages = await prisma.communityMessage.findMany({
+      where: { communityId: req.params.id },
+      include: { user: { select: { id: true, name: true, username: true, avatarUrl: true } } },
+      orderBy: { createdAt: 'asc' },
+      take: 100
+    });
+    return res.json(messages);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch messages' });
+  }
+});
+
+// POST /api/communities/:id/messages - Send a message in a community
+router.post('/:id/messages', async (req, res) => {
+  const { userId, text } = req.body;
+  if (!userId || !text) return res.status(400).json({ error: 'Missing userId or text' });
+
+  try {
+    const message = await prisma.communityMessage.create({
+      data: { text, userId, communityId: req.params.id },
+      include: { user: { select: { id: true, name: true, username: true, avatarUrl: true } } }
+    });
+    return res.status(201).json(message);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to send message' });
   }
 });
 

@@ -13,6 +13,8 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
@@ -100,7 +102,53 @@ export default function ChatPage() {
         
         {/* Sidebar: Conversations */}
         <div style={{ borderRight: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.01)', padding: 24, overflowY: 'auto' }}>
-          <h2 style={{ fontSize: 20, fontWeight: 900, marginBottom: 24, paddingLeft: 8 }}>Messages</h2>
+          <h2 style={{ fontSize: 20, fontWeight: 900, marginBottom: 16, paddingLeft: 8 }}>Messages</h2>
+          
+          {/* Search for new chats */}
+          <div style={{ marginBottom: 16 }}>
+            <input 
+              placeholder="Search users to chat..."
+              value={searchQuery}
+              onChange={async (e) => {
+                setSearchQuery(e.target.value);
+                if (e.target.value.length >= 2) {
+                  try {
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/social/discover`);
+                    const users = await res.json();
+                    setSearchResults(users.filter((u: any) => 
+                      u.id !== currentUser.id && 
+                      (u.name?.toLowerCase().includes(e.target.value.toLowerCase()) || u.username?.toLowerCase().includes(e.target.value.toLowerCase()))
+                    ));
+                  } catch(e) { console.error(e); }
+                } else {
+                  setSearchResults([]);
+                }
+              }}
+              style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 12, padding: '10px 16px', color: '#fff', outline: 'none', fontSize: 13 }}
+            />
+            {searchResults.length > 0 && (
+              <div style={{ background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 12, marginTop: 4, overflow: 'hidden' }}>
+                {searchResults.slice(0, 5).map((u: any) => (
+                  <button 
+                    key={u.id}
+                    onClick={() => {
+                      setActiveChat({ user: u, lastMessage: '' });
+                      setSearchQuery('');
+                      setSearchResults([]);
+                    }}
+                    style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '10px 14px', width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.03)' }}
+                  >
+                    <img src={u.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.username}`} style={{ width: 32, height: 32, borderRadius: '50%' }} alt="" />
+                    <div style={{ textAlign: 'left' }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{u.displayName || u.name}</div>
+                      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>@{u.username}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {inbox.map((conv, i) => (
               <button 

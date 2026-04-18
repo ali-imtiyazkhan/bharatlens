@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/navigation';
+import Link from 'next/link';
 import AuthControls from '../../components/AuthControls';
 import Navbar from '../../components/Navbar';
 import { motion } from 'framer-motion';

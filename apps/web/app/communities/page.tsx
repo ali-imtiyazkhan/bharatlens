@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import Navbar from '../../components/Navbar';
-import AuthControls from '../../components/AuthControls';
 
 export default function CommunitiesPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -11,7 +11,8 @@ export default function CommunitiesPage() {
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newCommunity, setNewCommunity] = useState({ name: '', description: '', interest: '' });
-  const [requestPopup, setRequestPopup] = useState<any>(null); // To handle join messages
+  const [requestPopup, setRequestPopup] = useState<any>(null);
+  const [tab, setTab] = useState<'discover' | 'mine'>('discover');
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
@@ -87,11 +88,30 @@ export default function CommunitiesPage() {
           </button>
         </div>
 
+        {/* Tab Switcher */}
+        <div style={{ display: 'flex', gap: 4, marginBottom: 32, background: 'rgba(255,255,255,0.02)', padding: 4, borderRadius: 14, width: 'fit-content' }}>
+          <button 
+            onClick={() => setTab('discover')} 
+            style={{ padding: '10px 24px', borderRadius: 12, fontSize: 12, fontWeight: 800, border: 'none', cursor: 'pointer', background: tab === 'discover' ? '#c9a84c' : 'transparent', color: tab === 'discover' ? '#000' : 'rgba(255,255,255,0.4)', transition: 'all 0.3s' }}
+          >
+            Discover All
+          </button>
+          <button 
+            onClick={() => setTab('mine')} 
+            style={{ padding: '10px 24px', borderRadius: 12, fontSize: 12, fontWeight: 800, border: 'none', cursor: 'pointer', background: tab === 'mine' ? '#c9a84c' : 'transparent', color: tab === 'mine' ? '#000' : 'rgba(255,255,255,0.4)', transition: 'all 0.3s' }}
+          >
+            My Communities
+          </button>
+        </div>
+
         {loading ? (
           <div style={{ color: '#c9a84c' }}>Mapping communities...</div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
-            {communities.map((c, i) => (
+            {(tab === 'mine' 
+              ? communities.filter((c: any) => c.creatorId === currentUser?.id || c.members?.some((m: any) => m.userId === currentUser?.id))
+              : communities
+            ).map((c: any, i: number) => (
               <motion.div 
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
@@ -116,16 +136,33 @@ export default function CommunitiesPage() {
                     {c.description}
                   </p>
                 </div>
-                <button 
-                  onClick={() => handleRequestJoin(c.id)}
-                  style={{ 
-                    marginTop: 'auto', background: 'rgba(255,255,255,0.05)', color: '#fff', 
-                    border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: 12, 
-                    fontWeight: 700, cursor: 'pointer' 
-                  }}
-                >
-                  Request to Join
-                </button>
+                {(() => {
+                  const isMember = c.members?.some((m: any) => m.userId === currentUser?.id) || c.creatorId === currentUser?.id;
+                  return isMember ? (
+                    <Link 
+                      href={`/communities/${c.id}`}
+                      style={{ 
+                        marginTop: 'auto', background: '#c9a84c', color: '#000', 
+                        border: 'none', padding: '12px', borderRadius: 12, 
+                        fontWeight: 900, cursor: 'pointer', textDecoration: 'none', textAlign: 'center',
+                        display: 'block'
+                      }}
+                    >
+                      💬 Enter Chat
+                    </Link>
+                  ) : (
+                    <button 
+                      onClick={() => handleRequestJoin(c.id)}
+                      style={{ 
+                        marginTop: 'auto', background: 'rgba(255,255,255,0.05)', color: '#fff', 
+                        border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: 12, 
+                        fontWeight: 700, cursor: 'pointer' 
+                      }}
+                    >
+                      Request to Join
+                    </button>
+                  );
+                })()}
               </motion.div>
             ))}
           </div>
