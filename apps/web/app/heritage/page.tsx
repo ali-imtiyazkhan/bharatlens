@@ -1,0 +1,85 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import AuthControls from '../../components/AuthControls';
+
+const figures = [
+  {
+    id: 'akbar',
+    name: 'Akbar the Great',
+    era: '1542 – 1605 CE',
+    site: 'Fatehpur Sikri',
+    state: 'Uttar Pradesh',
+    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=2000&auto=format&fit=crop',
+    description: 'Speak with Jalal-ud-din Muhammad Akbar. Discuss the Din-i-Ilahi, the Ibadat Khana, and his vision for a syncretic India.',
+  },
+  {
+    id: 'laxmibai',
+    name: 'Rani Laxmibai',
+    era: '1828 – 1858 CE',
+    site: 'Jhansi Fort',
+    state: 'Uttar Pradesh',
+    image: 'https://images.unsplash.com/photo-1707056637380-575ec65c82de?q=80&w=2000&auto=format&fit=crop',
+    description: 'Converse with the fierce Queen of Jhansi. Discover her bravery during the Indian Rebellion of 1857.',
+  }
+];
+
+export default function HeritageVoicesPage() {
+  return (
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', fontFamily: "'Outfit', sans-serif" }}>
+      <nav style={{ padding: '24px 64px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <Link href="/explore" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, fontWeight: 700, padding: '8px 16px', background: 'rgba(255,255,255,0.05)', borderRadius: 20 }}>
+          ← Back to Explore
+        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          <div style={{ color: '#c9a84c', fontSize: 13, fontWeight: 800, letterSpacing: '0.1em' }}>HERITAGE VOICES</div>
+          <AuthControls />
+        </div>
+      </nav>
+
+      <main style={{ padding: '64px', maxWidth: 1200, margin: '0 auto' }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 style={{ fontSize: 56, fontWeight: 900, marginBottom: 16 }}>Talk to History</h1>
+          <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.6)', maxWidth: 600, lineHeight: 1.6, marginBottom: 64 }}>
+            Experience history like never before. Stand at the exact locations where they made history, and use your device to converse with the figures who shaped India.
+          </p>
+        </motion.div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+          {figures.map((figure, idx) => (
+            <motion.div 
+              key={figure.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              className="group"
+              style={{ position: 'relative', borderRadius: 24, overflow: 'hidden', height: 400 }}
+            >
+              <div style={{ position: 'absolute', inset: 0, background: `url(${figure.image}) center/cover`, transition: 'transform 0.5s', transform: 'scale(1.05)' }} className="bg-img" />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.2))' }} />
+              
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 32 }}>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                  <span style={{ fontSize: 11, fontWeight: 800, background: 'rgba(201,168,76,0.2)', color: '#c9a84c', padding: '4px 10px', borderRadius: 4 }}>📍 {figure.site}</span>
+                  <span style={{ fontSize: 11, fontWeight: 800, background: 'rgba(255,255,255,0.1)', color: '#fff', padding: '4px 10px', borderRadius: 4 }}>{figure.era}</span>
+                </div>
+                <h2 style={{ fontSize: 32, fontWeight: 800, marginBottom: 8 }}>{figure.name}</h2>
+                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)', marginBottom: 24, lineHeight: 1.5 }}>{figure.description}</p>
+                
+                <Link href={`/heritage/${figure.id}`} style={{ display: 'inline-block', background: '#c9a84c', color: '#000', padding: '12px 24px', borderRadius: 8, fontWeight: 800, textDecoration: 'none', fontSize: 14 }}>
+                  Connect with {figure.name.split(' ')[0]} →
+                </Link>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </main>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        .bg-img:hover { transform: scale(1.1); }
+      `}} />
+    </div>
+  );
+}

@@ -14,7 +14,6 @@ export default function SiteExplorerPage() {
   const [details, setDetails] = useState<any>(null);
 
   useEffect(() => {
-    // Mocking an AI deep dive fetch based on exactly the siteName
     const fetchDetails = async () => {
       try {
         const res = await fetch('/api/explore/sites', {
@@ -26,7 +25,6 @@ export default function SiteExplorerPage() {
         if (data.sites && data.sites.length > 0) {
           setDetails({
             ...data.sites[0],
-            // Add extra mock properties for the deep dive
             fullHistory: `${data.sites[0].desc} This incredible monument dates back to the ${data.sites[0].era} era. It stands as a testament to the architectural brilliance of its time. Archaeological excavations have revealed layers of history indicating it was a pivotal center for cultural and trade exchanges.`,
             blockchainHash: '0x' + Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join(''),
             verifiedDate: new Date().toLocaleDateString()
@@ -44,9 +42,7 @@ export default function SiteExplorerPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#080808', display: 'flex', flexDirection: 'column' }}>
       
-      {/* Dynamic Header */}
       <div style={{ height: '40vh', position: 'relative', background: 'linear-gradient(to bottom, transparent, #080808)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '32px 64px' }}>
-        {/* Placeholder image background */}
         <div style={{ position: 'absolute', inset: 0, background: 'url(https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=2670&auto=format&fit=crop) center/cover', opacity: 0.3, zIndex: 0 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(8,8,8,0.2) 0%, #080808 100%)', zIndex: 0 }} />
 
@@ -94,7 +90,7 @@ export default function SiteExplorerPage() {
           )}
 
           <h2 style={{ fontSize: 24, fontWeight: 800, fontFamily: "'Outfit', sans-serif", color: '#e8e4dc', marginTop: 48, marginBottom: 24 }}>Experiences</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
             <Link href="/navigation" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s' }}>
               <div style={{ fontSize: 24, marginBottom: 8 }}>🎧</div>
               <div style={{ fontSize: 14, fontWeight: 800, color: '#fff', fontFamily: "'Outfit', sans-serif" }}>Audio Tour</div>
@@ -104,6 +100,21 @@ export default function SiteExplorerPage() {
               <div style={{ fontSize: 24, marginBottom: 8 }}>📷</div>
               <div style={{ fontSize: 14, fontWeight: 800, color: '#fff', fontFamily: "'Outfit', sans-serif" }}>AR Camera</div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>Translate signs and unlock secrets.</div>
+            </Link>
+            <Link href="/heritage" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.1) 0%, rgba(0,0,0,0.5) 100%)', border: '1px solid rgba(201,168,76,0.3)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s' }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>📜</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#c9a84c', fontFamily: "'Outfit', sans-serif" }}>Heritage Voices</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>Talk to historical figures at this site.</div>
+            </Link>
+            <Link href="/archive" style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(0,0,0,0.5) 100%)', border: '1px solid rgba(59,130,246,0.3)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s' }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>🎙️</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#3b82f6', fontFamily: "'Outfit', sans-serif" }}>Living Archive</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>Listen to local elders tell untold stories.</div>
+            </Link>
+            <Link href="/journey" style={{ background: 'linear-gradient(135deg, rgba(168,85,247,0.1) 0%, rgba(0,0,0,0.5) 100%)', border: '1px solid rgba(168,85,247,0.3)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s' }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>🗺️</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#a855f7', fontFamily: "'Outfit', sans-serif" }}>Insider Journey</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>Navigate like a local with crowd-sourced tips.</div>
             </Link>
           </div>
         </div>

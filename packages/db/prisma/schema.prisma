@@ -33,11 +33,11 @@ model Heritage {
   longitude     Float
   city          String
   state         String
-  category      String    // monument, artifact, temple, etc
+  category      String 
   images        String[]
   model3dUrl    String?
   audioUrl      String?
-  languages     Json      // { en: "...", hi: "...", fr: "..." }
+  languages     Json  
   isVerified    Boolean   @default(false)
   blockchainId  String?
   createdAt     DateTime  @default(now())
@@ -54,7 +54,7 @@ model Itinerary {
   destination   String
   days          Int
   budget        String
-  plan          Json      // AI generated plan
+  plan          Json   
   createdAt     DateTime  @default(now())
 
   user          User      @relation(fields: [userId], references: [id])
