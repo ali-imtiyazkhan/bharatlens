@@ -59,6 +59,27 @@ bharatlens/
 
 ---
 
+## 🌍 Production Deployment
+
+BharatLens uses a distributed production architecture:
+
+- **Frontend**: [Vercel](https://vercel.com/) (Next.js)
+- **Backend API**: [Render](https://render.com/) (Express + WebSockets)
+- **Database**: [Render PostgreSQL](https://render.com/docs/databases) (Managed DB)
+
+### 1. Vercel Configuration (Frontend)
+Set these environment variables in your Vercel project:
+- `NEXT_PUBLIC_API_URL`: Use your production Render URL (e.g., `https://bharatlens-api.onrender.com`)
+- `API_URL`: Same as above.
+
+### 2. Render Configuration (Backend)
+The backend is automatically deployed using the `render.yaml` blueprint. The build pipeline is optimized to:
+1. Install all monorepo dependencies.
+2. Synchronize the database schema with `db:push`.
+3. Build the Express API.
+
+---
+
 ## 🚀 Getting Started
 
 ### 1. Prerequisites
@@ -75,7 +96,7 @@ Create a `.env` file in `apps/api/` and `apps/web/`:
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:pass@host:6543/db?sslmode=require&pgbouncer=true"
+DATABASE_URL="postgresql://user:pass@host:6543/db?sslmode=require"
 
 # AI
 GEMINI_API_KEY="your-api-key"
@@ -84,9 +105,12 @@ GEMINI_API_KEY="your-api-key"
 JWT_SECRET="your-secret"
 ```
 
-### 4. Database Initialization
+### 4. Database Setup & Dev
 ```bash
+# Push schema to DB
 pnpm --filter @bharatlens/db run db:push
+
+# Generate client
 pnpm --filter @bharatlens/db run db:generate
 ```
 
