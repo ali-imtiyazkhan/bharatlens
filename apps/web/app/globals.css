@@ -1,4 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap");
+
+:root {
+  --gold: #c9a84c;
+  --gold-dim: rgba(201, 168, 76, 0.15);
+  --gold-line: rgba(201, 168, 76, 0.25);
+  --white: #f0ece4;
+  --muted: rgba(240, 236, 228, 0.38);
+  --dimmer: rgba(240, 236, 228, 0.18);
+  --bg: #080808;
+}
 
 *,
 *::before,
