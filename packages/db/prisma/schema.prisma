@@ -41,6 +41,11 @@ model User {
   
   followers           User[]    @relation("UserFollows")
   following           User[]    @relation("UserFollows")
+
+  messagesSent        Message[] @relation("MessagesSent")
+  messagesReceived    Message[] @relation("MessagesReceived")
+  communities         CommunityMember[]
+  joinRequests        JoinRequest[]
 }
 
 model Heritage {
@@ -174,4 +179,52 @@ model Badge {
   earnedAt      DateTime  @default(now())
 
   user          User      @relation(fields: [userId], references: [id])
+}
+
+model Message {
+  id            String    @id @default(cuid())
+  text          String
+  senderId      String
+  receiverId    String
+  createdAt     DateTime  @default(now())
+
+  sender        User      @relation("MessagesSent", fields: [senderId], references: [id])
+  receiver      User      @relation("MessagesReceived", fields: [receiverId], references: [id])
+}
+
+model Community {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  description   String
+  interest      String
+  creatorId     String
+  avatarUrl     String?
+  createdAt     DateTime  @default(now())
+
+  members       CommunityMember[]
+  requests      JoinRequest[]
+}
+
+model CommunityMember {
+  userId        String
+  communityId   String
+  role          String    @default("MEMBER") // CREATOR, ADMIN, MEMBER
+  joinedAt      DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id])
+  community     Community @relation(fields: [communityId], references: [id])
+
+  @@id([userId, communityId])
+}
+
+model JoinRequest {
+  id            String    @id @default(cuid())
+  userId        String
+  communityId   String
+  status        String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  message       String?
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id])
+  community     Community @relation(fields: [communityId], references: [id])
 }

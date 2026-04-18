@@ -62,12 +62,18 @@ router.post('/signup', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Generate a unique-ish username from name (sanitize to alphanumeric)
+    const baseUsername = name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_');
+    const randomSuffix = Math.floor(Math.random() * 1000);
+    const username = `${baseUsername}_${randomSuffix}`;
 
     const newUser = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
+        username,
         language: language || 'en',
       }
     });
@@ -85,9 +91,13 @@ router.post('/signup', async (req, res) => {
         language: newUser.language,
       }
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error during signup:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ 
+      error: 'Internal server error', 
+      details: error.message,
+      message: 'Signup failed. This might be due to a duplicate email or invalid data.'
+    });
   }
 });
 

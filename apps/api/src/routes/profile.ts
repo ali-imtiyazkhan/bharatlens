@@ -59,10 +59,21 @@ router.get('/:username', async (req, res) => {
 
 router.put('/me', async (req, res) => {
   try {
-    // const { bio, city, avatarUrl } = req.body;
-    // await prisma.user.update...
+    const { displayName, bio, city } = req.body;
+    
+    // In a real app, get this from auth middleware
+    // For now, we'll try to find the user by a placeholder ID or just update the first one if it's a demo
+    const user = await prisma.user.findFirst(); 
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { displayName, bio, city }
+    });
+
     return res.status(200).json({ success: true, message: "Profile updated" });
   } catch (error) {
+    console.error('Update failed:', error);
     return res.status(500).json({ error: 'Update failed' });
   }
 });

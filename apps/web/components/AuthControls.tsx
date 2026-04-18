@@ -27,12 +27,12 @@ export default function AuthControls() {
   if (user) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <Link 
-          href={`/profile/${user.username || 'rajesh_explorer'}`} 
+        <Link
+          href={`/profile/${user.username || 'rajesh_explorer'}`}
           title={`View profile of ${user.name}`}
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
+          style={{
+            display: 'flex',
+            alignItems: 'center',
             textDecoration: 'none',
             transition: 'transform 0.2s ease',
             border: '2px solid rgba(201,168,76,0.3)',
@@ -43,21 +43,21 @@ export default function AuthControls() {
           onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
         >
           {user.avatarUrl ? (
-            <img 
-              src={user.avatarUrl} 
-              alt={user.name} 
-              style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover' }} 
+            <img
+              src={user.avatarUrl}
+              alt={user.name}
+              style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover' }}
             />
           ) : (
-            <div style={{ 
-              width: 34, 
-              height: 34, 
-              borderRadius: '50%', 
-              background: 'linear-gradient(135deg, #c9a84c 0%, #3b82f6 100%)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              fontSize: '12px', 
+            <div style={{
+              width: 34,
+              height: 34,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #c9a84c 0%, #3b82f6 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
               fontWeight: 800,
               color: '#fff',
               textShadow: '0 1px 2px rgba(0,0,0,0.3)'
@@ -68,13 +68,13 @@ export default function AuthControls() {
         </Link>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <span style={{ fontSize: '10px', fontWeight: 800, color: '#c9a84c', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Explorer</span>
-          <button 
-            onClick={handleLogout} 
-            style={{ 
-              background: 'transparent', 
-              border: 'none', 
-              color: 'rgba(255,255,255,0.4)', 
-              fontSize: '10px', 
+          <button
+            onClick={handleLogout}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'rgba(255,255,255,0.4)',
+              fontSize: '10px',
               fontWeight: 600,
               cursor: 'pointer',
               padding: '0',
