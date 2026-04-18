@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   keywords: ["India", "heritage", "tourism", "AR", "AI", "translation"],
 };
 
+import StudioBackground from "../components/StudioBackground";
+
 export default function RootLayout({
   children,
 }: {
@@ -15,7 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body style={{ margin: 0, padding: 0, background: '#080808' }}>
+        <StudioBackground />
+        <div style={{ position: 'relative', zIndex: 1 }}>{children}</div>
+      </body>
     </html>
   );
 }

@@ -2,7 +2,8 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import AuthControls from '../../components/AuthControls';
+import { useRouter } from 'next/navigation';
+import Navbar from '../../components/Navbar';
 
 /* ── Data ── */
 const CATEGORIES = ['All', 'Monuments', 'Forts', 'UNESCO', 'Temples', 'Caves', 'Palaces', 'Stepwells'];
@@ -28,6 +29,7 @@ interface Site {
   desc: string;
   weather: string;
   temp: string;
+  panoramaUrl?: string; // Added for immersive compatibility
 }
 
 
@@ -63,6 +65,7 @@ const SiteImage = ({ name, style, children }: { name: string; style: React.CSSPr
 };
 
 export default function ExplorePage() {
+  const router = useRouter();
   const [search, setSearch] = useState('');
   const [activeCat, setActiveCat] = useState('All');
   const [stateFilter, setStateFilter] = useState('All States');
@@ -113,23 +116,11 @@ export default function ExplorePage() {
   }, [sites, search, activeCat, stateFilter, eraFilter, sortBy]);
 
   return (
-    <div className="page">
-      {/* ── Navbar ── */}
-      <nav className="navbar">
-        <Link href="/" className="nav-brand">BHARAT<br />LENS</Link>
-        <div className="nav-links-center">
-          <Link href="/explore" style={{ color: '#e8e4dc' }}>Destinations</Link>
-          <Link href="/virtual-tours">Virtual Tours</Link>
-          <Link href="/planner">AI Planner</Link>
-          <Link href="/blog">Blog</Link>
-        </div>
-        <div className="nav-controls">
-          <AuthControls />
-        </div>
-      </nav>
+    <div className="page" style={{ background: 'transparent' }}>
+      <Navbar />
 
       {/* ── Zone 1: Search & Category Chips ── */}
-      <div style={{ padding: '32px 32px 0', position: 'relative', zIndex: 5 }}>
+      <div style={{ padding: '48px 48px 0', position: 'relative', zIndex: 5 }}>
         <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 20 }}>
           <div style={{ flex: 1, position: 'relative' }}>
             <input
@@ -183,7 +174,7 @@ export default function ExplorePage() {
       <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', flex: 1, position: 'relative', zIndex: 5 }}>
 
         {/* ── Zone 2: Sidebar Filters ── */}
-        <aside style={{ padding: '28px 24px', borderRight: '0.5px solid rgba(255,255,255,0.08)', overflowY: 'auto', maxHeight: 'calc(100vh - 180px)' }}>
+        <aside style={{ padding: '28px 48px', borderRight: '0.5px solid rgba(255,255,255,0.08)', overflowY: 'auto', maxHeight: 'calc(100vh - 180px)' }}>
           <div style={{ marginBottom: 24 }}>
             <label style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' as const, display: 'block', marginBottom: 8 }}>State</label>
             <select
@@ -227,7 +218,7 @@ export default function ExplorePage() {
         </aside>
 
         {/* ── Right Content ── */}
-        <div style={{ padding: '28px 32px', overflowY: 'auto', maxHeight: 'calc(100vh - 180px)' }}>
+        <div style={{ padding: '28px 48px', overflowY: 'auto', maxHeight: 'calc(100vh - 180px)' }}>
 
           {/* ── Zone 3: Interactive Map ── */}
           <div style={{
@@ -390,12 +381,18 @@ export default function ExplorePage() {
                   </div>
                   <p style={{ fontSize: 11, lineHeight: 1.7, color: 'rgba(255,255,255,0.4)', marginBottom: 14, fontWeight: 500, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{site.desc}</p>
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <button style={{
-                      flex: 1, padding: '8px 0', borderRadius: 4, fontSize: 9, fontWeight: 800,
-                      fontFamily: "'Montserrat', sans-serif", letterSpacing: '0.08em',
-                      background: 'rgba(201,168,76,0.12)', border: '0.5px solid rgba(201,168,76,0.3)',
-                      color: '#c9a84c', cursor: 'pointer', transition: 'all 0.2s',
-                    }}>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/immersive/${site.id || site.name.toLowerCase().replace(/\s+/g, '-')}`);
+                      }}
+                      style={{
+                        flex: 1, padding: '8px 0', borderRadius: 4, fontSize: 9, fontWeight: 800,
+                        fontFamily: "'Montserrat', sans-serif", letterSpacing: '0.08em',
+                        background: 'rgba(201,168,76,0.12)', border: '0.5px solid rgba(201,168,76,0.3)',
+                        color: '#c9a84c', cursor: 'pointer', transition: 'all 0.2s',
+                      }}
+                    >
                       AR VIEW
                     </button>
                     <Link href={`/planner?destination=${encodeURIComponent(site.name)}`} style={{

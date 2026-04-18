@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import AuthControls from "../../components/AuthControls";
+import Navbar from "../../components/Navbar";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -182,29 +182,13 @@ export default function PlannerPage() {
   };
 
   return (
-    <div className="page">
-      {/* Navbar */}
-      <nav className="navbar">
-        <Link href="/" className="nav-brand">
-          BHARAT<br />LENS
-        </Link>
-        <div className="nav-links-center">
-          <Link href="/explore">Destinations</Link>
-          <Link href="/virtual-tours">Virtual Tours</Link>
-          <Link href="/planner" style={{ color: "#e8e4dc" }}>AI Planner</Link>
-          <Link href="/blog">Blog</Link>
-        </div>
-        <div className="nav-controls">
-          <Link href="/planner/discover" className="btn-outline" style={{ fontSize: 10, padding: "6px 14px" }}>
-            Discover Places
-          </Link>
-          <AuthControls />
-        </div>
-      </nav>
+    <div className="page" style={{ background: 'transparent' }}>
+      
+      <Navbar />
 
       <div className="planner-container">
         {/* Left Panel — Form */}
-        <div className="planner-form-panel">
+        <div className="planner-form-panel" style={{ padding: '40px 48px' }}>
           <span className="section-label">AI TRIP PLANNER</span>
           <h1 className="planner-title">
             Plan your <span className="planner-accent">perfect</span> trip.
@@ -300,7 +284,7 @@ export default function PlannerPage() {
         </div>
 
         {/* Right Panel — Result */}
-        <div className="planner-result-panel">
+        <div className="planner-result-panel" style={{ padding: '40px 48px' }}>
           {!result && !loading && (
             <div className="empty-state">
               <div className="empty-icon">✦</div>

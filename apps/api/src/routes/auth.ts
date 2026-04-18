@@ -35,6 +35,8 @@ router.post('/login', async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        username: user.username,
+        avatarUrl: user.avatarUrl,
         language: user.language,
       }
     });
@@ -78,6 +80,8 @@ router.post('/signup', async (req, res) => {
         id: newUser.id,
         name: newUser.name,
         email: newUser.email,
+        username: newUser.username,
+        avatarUrl: newUser.avatarUrl,
         language: newUser.language,
       }
     });

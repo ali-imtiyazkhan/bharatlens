@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import AuthControls from '../../components/AuthControls';
+import Navbar from '../../components/Navbar';
 
 const localStories = [
   {
@@ -38,18 +38,11 @@ export default function LivingArchivePage() {
   const [playingId, setPlayingId] = useState<string | null>(null);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#050505', color: '#fff', fontFamily: "'Outfit', sans-serif" }}>
-      <nav style={{ padding: '24px 64px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <Link href="/explore" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, fontWeight: 700, padding: '8px 16px', background: 'rgba(255,255,255,0.05)', borderRadius: 20 }}>
-          ← Back to Explore
-        </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <div style={{ color: '#3b82f6', fontSize: 13, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>LIVING ARCHIVE</div>
-          <AuthControls />
-        </div>
-      </nav>
+    <div className="page" style={{ background: 'transparent' }}>
+      
+      <Navbar />
 
-      <main style={{ padding: '64px', maxWidth: 1200, margin: '0 auto', display: 'flex', gap: 64 }}>
+      <main style={{ padding: '64px 48px', maxWidth: 1200, margin: '0 auto', display: 'flex', gap: 64 }}>
         
         <div style={{ flex: 1 }}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

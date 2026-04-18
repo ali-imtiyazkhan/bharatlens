@@ -21,22 +21,69 @@ export default function AuthControls() {
     localStorage.removeItem('user');
     localStorage.removeItem('auth_token');
     setUser(null);
-    window.location.reload();
+    window.location.href = '/login';
   };
 
   if (user) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontWeight: 500 }}>
-          Hi, {user.name?.split(' ')[0]}
-        </span>
-        <button 
-          onClick={handleLogout} 
-          className="btn-outline" 
-          style={{ padding: '6px 14px', fontSize: '12px', cursor: 'pointer' }}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <Link 
+          href={`/profile/${user.username || 'rajesh_explorer'}`} 
+          title={`View profile of ${user.name}`}
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            textDecoration: 'none',
+            transition: 'transform 0.2s ease',
+            border: '2px solid rgba(201,168,76,0.3)',
+            borderRadius: '50%',
+            padding: '2px'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
         >
-          Logout
-        </button>
+          {user.avatarUrl ? (
+            <img 
+              src={user.avatarUrl} 
+              alt={user.name} 
+              style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover' }} 
+            />
+          ) : (
+            <div style={{ 
+              width: 34, 
+              height: 34, 
+              borderRadius: '50%', 
+              background: 'linear-gradient(135deg, #c9a84c 0%, #3b82f6 100%)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontSize: '12px', 
+              fontWeight: 800,
+              color: '#fff',
+              textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+            }}>
+              {user.name?.[0]}
+            </div>
+          )}
+        </Link>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span style={{ fontSize: '10px', fontWeight: 800, color: '#c9a84c', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Explorer</span>
+          <button 
+            onClick={handleLogout} 
+            style={{ 
+              background: 'transparent', 
+              border: 'none', 
+              color: 'rgba(255,255,255,0.4)', 
+              fontSize: '10px', 
+              fontWeight: 600,
+              cursor: 'pointer',
+              padding: '0',
+              textAlign: 'left'
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </div>
     );
   }

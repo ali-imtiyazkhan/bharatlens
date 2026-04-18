@@ -4,32 +4,103 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const router: Router = Router();
 const apiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(apiKey);
-const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-2.0-flash-lite', 'gemini-2.5-flash'];
+const FALLBACK_MODELS = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
+
+const FALLBACK_SITES = {
+  sites: [
+    {
+      id: 101,
+      name: "Taj Mahal",
+      state: "Uttar Pradesh",
+      category: "Mausoleum",
+      era: "Mughal (1632)",
+      rating: 4.9,
+      crowd: "High",
+      hasAR: true,
+      has3D: true,
+      offline: true,
+      unesco: true,
+      lat: 27.1751,
+      lng: 78.0421,
+      desc: "An ivory-white marble mausoleum on the south bank of the Yamuna river.",
+      weather: "☀️",
+      temp: "32°C"
+    },
+    {
+      id: 102,
+      name: "Qutub Minar",
+      state: "Delhi",
+      category: "Minaret",
+      era: "Mamluk (1192)",
+      rating: 4.7,
+      crowd: "Medium",
+      hasAR: true,
+      has3D: false,
+      offline: true,
+      unesco: true,
+      lat: 28.5244,
+      lng: 77.1855,
+      desc: "A 73-meter tall tapering tower of five stories, made of red sandstone.",
+      weather: "🌤️",
+      temp: "30°C"
+    },
+    {
+      id: 103,
+      name: "Hampi Ruins",
+      state: "Karnataka",
+      category: "Ancient City",
+      era: "Vijayanagara (14th Century)",
+      rating: 4.8,
+      crowd: "Low",
+      hasAR: true,
+      has3D: true,
+      offline: false,
+      unesco: true,
+      lat: 15.3350,
+      lng: 76.4600,
+      desc: "The capital of the Vijayanagara Empire, featuring stunning rocky landscapes and temples.",
+      weather: "☁️",
+      temp: "28°C"
+    }
+  ]
+};
 
 const askGemini = async (prompt: string): Promise<any> => {
   let lastError: any;
+  // Limit iterations and retries to prevent proxy timeout
   for (const modelName of FALLBACK_MODELS) {
     try {
-      console.log(`Trying model: ${modelName}`);
-      const currentModel = genAI.getGenerativeModel({ model: modelName });
+      console.log(`[ExploreAPI] Trying model: ${modelName}`);
+      const currentModel = genAI.getGenerativeModel(
+        { model: modelName },
+        { timeout: 10000 } // 10 second timeout per model
+      );
+      
       const result = await currentModel.generateContent(prompt);
       const text = result.response.text();
       const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       return JSON.parse(cleaned);
     } catch (err: any) {
       lastError = err;
+      console.warn(`[ExploreAPI] Model ${modelName} failed:`, err?.message || 'Unknown error');
+      
       if (err?.status === 429 || err?.status === 503) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Only retry once per model for 429/503
+        console.log(`[ExploreAPI] Rate limited. Waiting 1s...`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
         continue;
       }
       continue;
     }
   }
-  throw lastError;
+  
+  console.error('[ExploreAPI] All Gemini models failed or timed out. Using static fallback data.');
+  return FALLBACK_SITES;
 };
+
 const askGeminiVision = async (base64Data: string, mimeType: string, prompt: string): Promise<any> => {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     const imageParts = [
       {
         inlineData: {
@@ -47,6 +118,7 @@ const askGeminiVision = async (base64Data: string, mimeType: string, prompt: str
     throw error;
   }
 };
+
 router.post('/sites', async (req, res) => {
   try {
     const { search, category, state, era } = req.body;
@@ -83,6 +155,11 @@ Respond ONLY with valid JSON matching this exact structure (no markdown, no expl
       "unesco": true, 
       "lat": 12.34, 
       "lng": 56.78, 
+      "panoramaUrl": "https://images.unsplash.com/photo-1599395293282-eeb7a921d7b1?q=80&w=2000",
+      "hotspots": [
+        { "title": "Main Entrance", "desc": "Built in the 16th century.", "x": 10, "y": 0, "z": -20 },
+        { "title": "The Minaret", "desc": "Highest point of the site.", "x": -15, "y": 10, "z": 10 }
+      ],
       "desc": "Short description of the site (2-3 sentences)",
       "weather": "☀️", 
       "temp": "35°C" 
@@ -90,11 +167,13 @@ Respond ONLY with valid JSON matching this exact structure (no markdown, no expl
   ]
 }`;
 
+    // Attempt AI fetch with fallback mechanism
     const data = await askGemini(prompt);
     return res.status(200).json(data);
   } catch (error) {
     console.error('Error in /explore/sites:', error);
-    return res.status(500).json({ error: 'Failed to fetch sites from AI' });
+    // Ultimate fallback if even askGemini throws
+    return res.status(200).json(FALLBACK_SITES);
   }
 });
 

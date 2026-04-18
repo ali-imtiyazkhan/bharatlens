@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
-import AuthControls from "../components/AuthControls";
 import CinematicIntro from "../components/CinematicIntro";
+import Navbar from "../components/Navbar";
 
 const MARQUEE_ITEMS = [
   "TAJ MAHAL","AMBER FORT","QUTUB MINAR","KHAJURAHO",
@@ -52,38 +52,8 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
-      {/* grid bg */}
-      <div className={styles.gridBg}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-          <defs>
-            <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#c9a84c" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
-
-      <div className={`${styles.orb} ${styles.orb1}`} />
-      <div className={`${styles.orb} ${styles.orb2}`} />
-      <div className={`${styles.orb} ${styles.orb3}`} />
-
-      {/* ── Navbar ── */}
-      <nav className={styles.nav}>
-        <div className={styles.navLogo}>
-          <div className={styles.logoMark} />
-          <span className={styles.logoText}>BHARATLENS</span>
-        </div>
-        <div className={styles.navCenter}>
-          <Link href="/" className={`${styles.navLink} ${styles.navActive}`}>Home</Link>
-          <Link href="/explore" className={styles.navLink}>Explore</Link>
-          <Link href="/planner" className={styles.navLink}>AI Planner</Link>
-          <Link href="/virtual-tours" className={styles.navLink}>Virtual Tours</Link>
-        </div>
-        <div className={styles.navRight}>
-          <AuthControls />
-        </div>
-      </nav>
+      
+      <Navbar />
 
       {/* ── Hero ── */}
       <section className={styles.hero}>

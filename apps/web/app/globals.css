@@ -34,7 +34,7 @@ body {
 /* ─── Page wrapper ──────────────────────────────────────── */
 .page {
   min-height: 100vh;
-  background: #0a0a0a;
+  background: transparent;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -59,8 +59,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 32px;
-  border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+  padding: 22px 48px;
+  border-bottom: 0.5px solid var(--gold-line);
 }
 
 .nav-brand {

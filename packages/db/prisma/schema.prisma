@@ -8,20 +8,39 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  password      String
-  language      String    @default("en")
-  budget        String?
-  interests     String[]
-  tokens        Int       @default(0)
-  createdAt     DateTime  @default(now())
+  id                  String    @id @default(cuid())
+  name                String
+  email               String    @unique
+  password            String
+  language            String    @default("en")
+  budget              String?
+  interests           String[]
+  tokens              Int       @default(0)
+  
+  username            String?   @unique
+  displayName         String?
+  bio                 String?
+  avatarUrl           String?
+  city                String?
+  country             String?
+  languagesSpoken     String[]
+  totalStars          Int       @default(0)
+  totalVisits         Int       @default(0)
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt @default(now())
 
-  itineraries   Itinerary[]
-  visits        Visit[]
-  rewards       Reward[]
-  reviews       Review[]
+  itineraries         Itinerary[]
+  visits              Visit[]
+  rewards             Reward[]
+  reviews             Review[]
+  badges              Badge[]
+  highlights          Highlight[]
+  starsGiven          Star[]    @relation("StarsGiven")
+  starsReceived       Star[]    @relation("StarsReceived")
+  
+  followers           User[]    @relation("UserFollows")
+  following           User[]    @relation("UserFollows")
 }
 
 model Heritage {
@@ -64,9 +83,9 @@ model VirtualTour {
   id            String    @id @default(cuid())
   heritageId    String
   title         String
-  sceneUrl      String    // 3D scene file
+  sceneUrl      String  
   thumbnailUrl  String
-  duration      Int       // in minutes
+  duration      Int       
   createdAt     DateTime  @default(now())
 
   heritage      Heritage  @relation(fields: [heritageId], references: [id])
@@ -78,9 +97,16 @@ model Visit {
   heritageId    String
   visitedAt     DateTime  @default(now())
   tokensEarned  Int       @default(10)
+  
+  photos        String[]
+  audioStoryUrl String?
+  caption       String?
+  isPublic      Boolean   @default(true)
+  highlightId   String?
 
   user          User      @relation(fields: [userId], references: [id])
   heritage      Heritage  @relation(fields: [heritageId], references: [id])
+  highlight     Highlight? @relation(fields: [highlightId], references: [id])
 }
 
 model Review {
@@ -98,7 +124,7 @@ model Review {
 model Reward {
   id            String    @id @default(cuid())
   userId        String
-  type          String    // visit, review, share, streak
+  type          String   
   tokens        Int
   earnedAt      DateTime  @default(now())
 
@@ -111,6 +137,41 @@ model Translation {
   translated    String
   fromLang      String
   toLang        String
-  type          String    // text, speech, image
+  type          String 
   createdAt     DateTime  @default(now())
+}
+
+model Highlight {
+  id            String    @id @default(cuid())
+  userId        String
+  title         String
+  coverImageUrl String?
+  order         Int       @default(0)
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id])
+  visits        Visit[]
+}
+
+model Star {
+  id            String    @id @default(cuid())
+  giverId       String
+  receiverId    String
+  visitId       String?
+  profileId     String?
+  createdAt     DateTime  @default(now())
+
+  giver         User      @relation("StarsGiven", fields: [giverId], references: [id])
+  receiver      User      @relation("StarsReceived", fields: [receiverId], references: [id])
+
+  @@unique([giverId, receiverId])
+}
+
+model Badge {
+  id            String    @id @default(cuid())
+  userId        String
+  badgeType     String
+  earnedAt      DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id])
 }
