@@ -51,8 +51,10 @@ export default function ARCameraPage() {
     setScanning(true);
     setResult(null);
 
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
     try {
-      const res = await fetch('/api/explore/vision', {
+      const res = await fetch(`${API_BASE}/api/explore/vision`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: imageSrc, mode })
@@ -63,7 +65,7 @@ export default function ARCameraPage() {
       setScanHistory(prev => [scanResult, ...prev].slice(0, 10));
     } catch (e) {
       console.error(e);
-      setResult({ error: 'Failed to analyze object. Try again.', mode, timestamp: new Date().toLocaleTimeString() });
+      setResult({ error: 'Vision API Offline. Check GEMINI_API_KEY.', mode, timestamp: new Date().toLocaleTimeString() });
     }
     
     setScanning(false);

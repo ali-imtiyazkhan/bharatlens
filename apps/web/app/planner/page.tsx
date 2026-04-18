@@ -128,6 +128,14 @@ export default function PlannerPage() {
     setInsights(null);
     setDestinationImage(null);
 
+    const savedUser = localStorage.getItem('user');
+    let userId = 'anonymous';
+    if (savedUser) {
+      try {
+        userId = JSON.parse(savedUser).id;
+      } catch (e) {}
+    }
+
     try {
       const [planRes, insightsRes] = await Promise.all([
         fetch(`${API_BASE}/api/planner/generate`, {
@@ -138,7 +146,7 @@ export default function PlannerPage() {
             budget,
             days,
             interests: selectedInterests,
-            userId: "demo-user-id",
+            userId,
           }),
         }),
         fetch(`${API_BASE}/api/planner/insights`, {

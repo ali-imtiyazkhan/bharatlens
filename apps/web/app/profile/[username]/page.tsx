@@ -4,27 +4,27 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Navbar from '../../../components/Navbar';
 
-// Import newly created profile components
 import ProfileHero from '../../../components/profile/ProfileHero';
 import HighlightReel from '../../../components/profile/HighlightReel';
 import BadgeWall from '../../../components/profile/BadgeWall';
 import VisitFeed from '../../../components/profile/VisitFeed';
 
 export default function ProfilePage() {
-  const params = useParams();
-  const username = params?.username as string;
-  
   const [profile, setProfile] = useState<any>(null);
   const [feed, setFeed] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const params = useParams();
+  const username = params?.username as string;
+  
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  
   useEffect(() => {
     if (!username) return;
 
     // Fetch Profile and Visits aggressively in parallel
     Promise.all([
-      fetch(`/api/profile/${username}`).then(res => res.json()),
-      fetch(`/api/visits/${username}`).then(res => res.json())
+      fetch(`${API_BASE}/api/profile/${username}`).then(res => res.json()),
+      fetch(`${API_BASE}/api/visits/${username}`).then(res => res.json())
     ]).then(([profileData, feedData]) => {
       setProfile(profileData);
       setFeed(feedData);

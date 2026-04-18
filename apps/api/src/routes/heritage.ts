@@ -102,4 +102,18 @@ Provide your response in JSON format exactly like this:
   }
 });
 
+router.get('/all', async (req, res) => {
+  try {
+    const sites = await prisma.heritage.findMany({
+      orderBy: { name: 'asc' }
+    });
+    return res.json(sites);
+  } catch (error) {
+    console.error('Error fetching heritage sites:', error);
+    return res.status(500).json({ error: 'Failed to fetch sites' });
+  }
+});
+
+import prisma from '../lib/prisma';
+
 export default router;

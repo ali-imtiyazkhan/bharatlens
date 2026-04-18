@@ -37,10 +37,12 @@ export default function ProfileHero({ profile: initialProfile }: { profile: any 
     alert('Profile link copied to clipboard! 🔗');
   };
 
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const res = await fetch('/api/profile/me', {
+      const res = await fetch(`${API_BASE}/api/profile/me`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editData)
@@ -60,7 +62,7 @@ export default function ProfileHero({ profile: initialProfile }: { profile: any 
   const handleFollow = async () => {
     if (!currentUser || !currentUser.id) return alert('Login required to follow explorers!');
     try {
-      const res = await fetch(`/api/social/${isFollowing ? 'unfollow' : 'follow'}/${profile.username}`, {
+      const res = await fetch(`${API_BASE}/api/social/${isFollowing ? 'unfollow' : 'follow'}/${profile.username}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentUserId: currentUser.id })
@@ -78,7 +80,7 @@ export default function ProfileHero({ profile: initialProfile }: { profile: any 
     if (!currentUser) return alert('Login to give stars!');
     if (hasStarred) return;
     try {
-      const res = await fetch(`/api/social/star/${profile.username}`, {
+      const res = await fetch(`${API_BASE}/api/social/star/${profile.username}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentUserId: currentUser.id })

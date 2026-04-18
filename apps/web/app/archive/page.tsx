@@ -1,114 +1,161 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 
-export default function LivingArchivePage() {
-  const [playingId, setPlayingId] = useState<string | null>(null);
-  const [stories, setStories] = useState<any[]>([]);
+export default function HeritageArchive() {
+  const [sites, setSites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('All');
+  const [selectedSite, setSelectedSite] = useState<any>(null);
+
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   useEffect(() => {
-    fetchStories();
+    async function fetchSites() {
+      try {
+        const res = await fetch(`${API_BASE}/api/heritage/all`);
+        const data = await res.json();
+        setSites(data);
+      } catch (e) {
+        console.error('Failed to fetch archive:', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSites();
   }, []);
 
-  const fetchStories = async () => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/archive/list`);
-      const data = await res.json();
-      setStories(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const categories = ['All', ...new Set(sites.map(s => s.category))];
+  const filteredSites = filter === 'All' ? sites : sites.filter(s => s.category === filter);
+
+  if (loading) {
+    return (
+      <div className="page" style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ fontSize: 24, fontWeight: 900, color: '#c9a84c', letterSpacing: '0.2em' }}>ACCESSING ARCHIVES...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="page" style={{ background: 'transparent' }}>
-      
+    <div className="page" style={{ minHeight: '100vh', background: '#050505' }}>
       <Navbar />
-
-      <main style={{ padding: '64px 48px', maxWidth: 1200, margin: '0 auto', display: 'flex', gap: 64 }}>
-        
-        <div style={{ flex: 1 }}>
+      
+      <main style={{ padding: '64px', maxWidth: 1400, margin: '0 auto' }}>
+        <header style={{ marginBottom: 64 }}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 style={{ fontSize: 56, fontWeight: 900, marginBottom: 16 }}>The Living Archive</h1>
-            <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: 48 }}>
-              Oral histories from the elders who lived them. Listen to the untranslated voices of India's villages and streets, translated into your language in real-time.
+            <span style={{ fontSize: 10, fontWeight: 800, color: '#c9a84c', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Digital Preservation</span>
+            <h1 style={{ fontSize: 64, fontWeight: 900, marginTop: 16, marginBottom: 24, letterSpacing: '-0.03em' }}>Heritage <span style={{ color: '#c9a84c' }}>Archive</span></h1>
+            <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.5)', maxWidth: 600, lineHeight: 1.6 }}>
+              A blockchain-verified digital library of India's cultural assets. Explore 3D models, historical maps, and high-fidelity captures of our shared history.
             </p>
           </motion.div>
 
-          <div style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(0,0,0,0.5) 100%)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 24, padding: 32 }}>
-            <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12, color: '#e8e4dc' }}>Are you a local?</h2>
-            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', marginBottom: 24, lineHeight: 1.5 }}>
-              Become a <strong>Story Aide</strong>. Help the elders in your community record their stories. You earn 20 Heritage Points, they earn 50. Preserve your culture before it fades.
-            </p>
-            <Link href="/archive/record" style={{ display: 'inline-block', background: '#3b82f6', color: '#fff', padding: '14px 28px', borderRadius: 12, fontWeight: 800, textDecoration: 'none', fontSize: 14 }}>
-              Start Recording a Story →
-            </Link>
-          </div>
-        </div>
-
-        <div style={{ flex: 1.5, display: 'flex', flexDirection: 'column', gap: 24 }}>
-          <div style={{ fontSize: 12, fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Stories Nearby</div>
-          
-          {loading ? (
-            <div style={{ color: '#3b82f6' }}>Unearthing oral histories...</div>
-          ) : stories.length === 0 ? (
-            <div style={{ color: 'rgba(255,255,255,0.3)', textAlign: 'center', padding: 48, border: '1px dashed rgba(255,255,255,0.05)', borderRadius: 20 }}>
-              No stories archived yet. Be the first to record one!
-            </div>
-          ) : (
-            stories.map((story) => (
-              <motion.div 
-                key={story.id} 
-                initial={{ opacity: 0, x: 20 }} 
-                animate={{ opacity: 1, x: 0 }}
-                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 20, padding: 24, transition: 'all 0.3s' }}
+          <div style={{ display: 'flex', gap: 12, marginTop: 48, overflowX: 'auto', paddingBottom: 12 }}>
+            {categories.map(cat => (
+              <button 
+                key={cat} 
+                onClick={() => setFilter(cat)}
+                style={{ 
+                  padding: '10px 24px', borderRadius: 30, fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                  background: filter === cat ? '#c9a84c' : 'rgba(255,255,255,0.03)',
+                  color: filter === cat ? '#000' : 'rgba(255,255,255,0.6)',
+                  border: '1px solid ' + (filter === cat ? '#c9a84c' : 'rgba(255,255,255,0.08)'),
+                  transition: 'all 0.3s',
+                  whiteSpace: 'nowrap'
+                }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
-                  <div>
-                    <h3 style={{ fontSize: 20, fontWeight: 800, color: '#e8e4dc', marginBottom: 4 }}>{story.title}</h3>
-                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
-                      Narrated by <strong>{story.authorName} ({story.authorAge})</strong>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(59,130,246,0.2)', color: '#60a5fa', padding: '4px 8px', borderRadius: 4 }}>{story.category}</span>
-                    <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(255,255,255,0.1)', color: '#fff', padding: '4px 8px', borderRadius: 4 }}>{story.era}</span>
-                  </div>
-                </div>
+                {cat}
+              </button>
+            ))}
+          </div>
+        </header>
 
-                {playingId === story.id && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} style={{ overflow: 'hidden', marginBottom: 16 }}>
-                    <div style={{ background: 'rgba(0,0,0,0.4)', padding: 16, borderRadius: 12, borderLeft: '3px solid #3b82f6', fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.8)' }}>
-                      <div style={{ fontSize: 10, color: '#3b82f6', fontWeight: 800, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI Translated from {story.language}</div>
-                      "{story.transcript}"
-                    </div>
-                  </motion.div>
-                )}
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
-                  <button 
-                    onClick={() => setPlayingId(playingId === story.id ? null : story.id)}
-                    style={{ background: playingId === story.id ? 'rgba(255,255,255,0.1)' : '#fff', color: playingId === story.id ? '#fff' : '#000', border: 'none', padding: '10px 20px', borderRadius: 8, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
-                  >
-                    {playingId === story.id ? '⏸ Pause' : '▶ Play Original Audio'}
-                  </button>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    📍 {story.siteName}
-                  </div>
-                </div>
-
-              </motion.div>
-            ))
-          )}
+        <div style={{ columns: '3 300px', columnGap: 24 }}>
+          {filteredSites.map((site, idx) => (
+            <motion.div 
+              key={site.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: idx * 0.05 }}
+              onClick={() => setSelectedSite(site)}
+              style={{ 
+                breakInside: 'avoid', marginBottom: 24, position: 'relative', borderRadius: 20, 
+                overflow: 'hidden', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)',
+                background: '#111'
+              }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <img 
+                src={site.images?.[0] || 'https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=1200'} 
+                style={{ width: '100%', display: 'block', height: 'auto', minHeight: 200, objectFit: 'cover' }}
+                alt={site.name}
+              />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)' }} />
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 24 }}>
+                <div style={{ fontSize: 9, fontWeight: 800, color: '#c9a84c', textTransform: 'uppercase', marginBottom: 4 }}>{site.category}</div>
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>{site.name}</h3>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>{site.state}</div>
+              </div>
+            </motion.div>
+          ))}
         </div>
-
       </main>
+
+      <AnimatePresence>
+        {selectedSite && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ 
+              position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.95)', 
+              backdropFilter: 'blur(20px)', padding: 64, display: 'flex', alignItems: 'center', justifyContent: 'center' 
+            }}
+            onClick={() => setSelectedSite(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              style={{ maxWidth: 1000, width: '100%', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 48, background: '#111', borderRadius: 32, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div style={{ position: 'relative', height: 600 }}>
+                <img src={selectedSite.images?.[0]} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="S" />
+                <div style={{ position: 'absolute', inset: 0, boxShadow: 'inset 0 0 100px rgba(0,0,0,0.5)' }} />
+              </div>
+              
+              <div style={{ padding: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: '#c9a84c', background: 'rgba(201,168,76,0.1)', padding: '6px 16px', borderRadius: 20 }}>{selectedSite.category}</span>
+                  {selectedSite.isVerified && <span style={{ fontSize: 10, fontWeight: 800, color: '#4ade80' }}>✓ VERIFIED ASSET</span>}
+                </div>
+                
+                <h2 style={{ fontSize: 48, fontWeight: 900, marginBottom: 16 }}>{selectedSite.name}</h2>
+                <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', marginBottom: 32 }}>📍 {selectedSite.location}</div>
+                
+                <p style={{ fontSize: 16, lineHeight: 1.8, color: 'rgba(255,255,255,0.7)', marginBottom: 40 }}>
+                  {selectedSite.description}
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  <button style={{ padding: '16px', borderRadius: 12, background: '#c9a84c', color: '#000', border: 'none', fontWeight: 800, cursor: 'pointer' }}>View 3D Model</button>
+                  <button style={{ padding: '16px', borderRadius: 12, background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontWeight: 800, cursor: 'pointer' }}>Download Assets</button>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setSelectedSite(null)}
+                style={{ position: 'absolute', top: 32, right: 32, background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', padding: '12px', borderRadius: '50%', cursor: 'pointer', zIndex: 10 }}
+              >
+                ✕
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

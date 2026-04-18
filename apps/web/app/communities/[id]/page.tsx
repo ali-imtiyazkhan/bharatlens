@@ -20,7 +20,7 @@ export default function CommunityChat() {
   const [showSidebar, setShowSidebar] = useState(true);
   const socketRef = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
@@ -56,7 +56,7 @@ export default function CommunityChat() {
 
   const fetchCommunity = async () => {
     try {
-      const res = await fetch(`${API}/api/communities/${id}`);
+      const res = await fetch(`${API_BASE}/api/communities/${id}`);
       const data = await res.json();
       setCommunity(data);
     } catch (e) { console.error(e); }
@@ -65,7 +65,7 @@ export default function CommunityChat() {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch(`${API}/api/communities/${id}/messages`);
+      const res = await fetch(`${API_BASE}/api/communities/${id}/messages`);
       const data = await res.json();
       setMessages(data);
     } catch (e) { console.error(e); }
@@ -76,7 +76,7 @@ export default function CommunityChat() {
     if (!newMsg.trim() || !currentUser) return;
 
     try {
-      const res = await fetch(`${API}/api/communities/${id}/messages`, {
+      const res = await fetch(`${API_BASE}/api/communities/${id}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: currentUser.id, text: newMsg })

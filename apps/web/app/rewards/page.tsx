@@ -14,6 +14,7 @@ export default function RewardsPage() {
 
   useEffect(() => {
     async function fetchData() {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       // Get the current logged in user from storage
       const stored = localStorage.getItem('user');
       let currentUser: any = null;
@@ -33,8 +34,8 @@ export default function RewardsPage() {
 
       try {
         const [statsRes, leadRes] = await Promise.all([
-          fetch(`/api/rewards/stats/${activeUsername}`),
-          fetch('/api/rewards/leaderboard')
+          fetch(`${API_BASE}/api/rewards/stats/${activeUsername}`),
+          fetch(`${API_BASE}/api/rewards/leaderboard`)
         ]);
         
         const statsData = await statsRes.json();
