@@ -21,10 +21,14 @@ import communityRoutes from './routes/communities';
 
 const app = express();
 
-const FRONTEND_URL = process.env.FRONTEND_URL || '*';
+const ALLOWED_ORIGINS = [
+  'http://localhost:3000',
+  'https://bharatlens-web.vercel.app',
+  process.env.FRONTEND_URL
+].filter(Boolean) as string[];
 
 app.use(cors({
-  origin: FRONTEND_URL,
+  origin: ALLOWED_ORIGINS.length > 0 ? ALLOWED_ORIGINS : '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
@@ -34,7 +38,7 @@ app.use(express.json());
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: FRONTEND_URL,
+    origin: ALLOWED_ORIGINS.length > 0 ? ALLOWED_ORIGINS : '*',
     methods: ['GET', 'POST']
   }
 });
