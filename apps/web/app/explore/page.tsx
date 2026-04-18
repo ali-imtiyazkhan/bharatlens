@@ -4,6 +4,8 @@ import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Navbar from '../../components/Navbar';
+import MapComponent from '../../components/MapComponent';
+import DynastyTimeline from '../../components/DynastyTimeline';
 
 /* ── Data ── */
 const CATEGORIES = ['All', 'Monuments', 'Forts', 'UNESCO', 'Temples', 'Caves', 'Palaces', 'Stepwells'];
@@ -151,24 +153,9 @@ export default function ExplorePage() {
             </button>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCat(cat)}
-              style={{
-                padding: '7px 18px', borderRadius: 20, fontSize: 11, fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 700, letterSpacing: '0.06em', cursor: 'pointer', transition: 'all 0.2s',
-                border: activeCat === cat ? '1px solid #c9a84c' : '0.5px solid rgba(255,255,255,0.1)',
-                background: activeCat === cat ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.02)',
-                color: activeCat === cat ? '#c9a84c' : 'rgba(255,255,255,0.45)',
-              }}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
       </div>
+
+      <DynastyTimeline activeEra={eraFilter} onSelectEra={setEraFilter} />
 
       {/* ── Main Layout: Sidebar + Content ── */}
       <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', flex: 1, position: 'relative', zIndex: 5 }}>
@@ -222,67 +209,17 @@ export default function ExplorePage() {
 
           {/* ── Zone 3: Interactive Map ── */}
           <div style={{
-            width: '100%', height: 320, borderRadius: 12, marginBottom: 32,
-            background: 'linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%)',
+            width: '100%', height: 400, borderRadius: 12, marginBottom: 32,
             border: '0.5px solid rgba(201,168,76,0.2)', position: 'relative', overflow: 'hidden',
           }}>
-            {/* Map grid overlay */}
-            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.06 }}>
-              <defs><pattern id="mapgrid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#c9a84c" strokeWidth="0.3" /></pattern></defs>
-              <rect width="100%" height="100%" fill="url(#mapgrid)" />
-            </svg>
-            {/* India outline approximation */}
-            <div style={{ position: 'absolute', top: '10%', left: '20%', width: '60%', height: '80%', border: '0.5px solid rgba(201,168,76,0.15)', borderRadius: '30% 40% 50% 20%', opacity: 0.3 }} />
-            {/* Pins */}
-            {filtered.map(site => {
-              const x = ((site.lng - 68) / (90 - 68)) * 80 + 10;
-              const y = ((35 - site.lat) / (35 - 8)) * 80 + 10;
-              return (
-                <button
-                  key={site.id}
-                  onClick={() => setSelectedSite(site)}
-                  title={site.name}
-                  style={{
-                    position: 'absolute', left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)',
-                    width: selectedSite?.id === site.id ? 16 : 10, height: selectedSite?.id === site.id ? 16 : 10,
-                    borderRadius: '50%', background: catColor(site.category),
-                    border: selectedSite?.id === site.id ? '2px solid #fff' : '1px solid rgba(0,0,0,0.3)',
-                    cursor: 'pointer', transition: 'all 0.2s', zIndex: selectedSite?.id === site.id ? 10 : 1,
-                    boxShadow: `0 0 ${selectedSite?.id === site.id ? '12px' : '6px'} ${catColor(site.category)}40`,
-                  }}
-                />
-              );
-            })}
-            {/* Map preview card */}
-            {selectedSite && (
-              <div style={{
-                position: 'absolute', bottom: 16, right: 16, width: 280, background: 'rgba(10,10,10,0.95)',
-                backdropFilter: 'blur(12px)', border: '0.5px solid rgba(201,168,76,0.3)', borderRadius: 12, padding: 16,
-                zIndex: 20,
-              }}>
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <SiteImage name={selectedSite.name} style={{ width: 64, height: 64, borderRadius: 8, flexShrink: 0 }} />
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#e8e4dc', fontFamily: "'Outfit', sans-serif" }}>{selectedSite.name}</div>
-                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>{selectedSite.state} · {selectedSite.weather} {selectedSite.temp}</div>
-                    <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
-                      <span style={{ fontSize: 8, padding: '2px 8px', borderRadius: 10, background: `${crowdColor(selectedSite.crowd)}20`, color: crowdColor(selectedSite.crowd), fontWeight: 700 }}>{selectedSite.crowd}</span>
-                      <span style={{ fontSize: 8, padding: '2px 8px', borderRadius: 10, background: 'rgba(201,168,76,0.15)', color: '#c9a84c', fontWeight: 700 }}>★ {selectedSite.rating}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* Legend */}
-            <div style={{ position: 'absolute', top: 12, left: 16, display: 'flex', gap: 12, fontSize: 8, fontWeight: 700, letterSpacing: '0.08em', fontFamily: "'Montserrat', sans-serif" }}>
-              {[['Monuments', '#c9a84c'], ['Forts', '#4ecdc4'], ['Temples', '#a78bfa'], ['UNESCO', '#3b82f6']].map(([label, color]) => (
-                <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'rgba(255,255,255,0.4)' }}>
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: color as string }} />{label}
-                </div>
-              ))}
-            </div>
-            <div style={{ position: 'absolute', top: 12, right: 16, fontSize: 9, color: 'rgba(201,168,76,0.5)', fontWeight: 700, letterSpacing: '0.1em', fontFamily: "'Montserrat', sans-serif" }}>
-              HERITAGE MAP · INDIA
+            <MapComponent 
+              sites={filtered} 
+              onSelectSite={setSelectedSite} 
+              selectedSite={selectedSite} 
+            />
+
+            <div style={{ position: 'absolute', top: 12, right: 16, fontSize: 9, color: 'rgba(201,168,76,0.5)', fontWeight: 700, letterSpacing: '0.1em', fontFamily: "'Montserrat', sans-serif", pointerEvents: 'none' }}>
+              HERITAGE MAP · 3D PERSPECTIVE
             </div>
           </div>
 

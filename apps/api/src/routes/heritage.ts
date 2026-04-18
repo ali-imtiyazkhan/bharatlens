@@ -4,7 +4,12 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const router: Router = Router();
 const apiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(apiKey);
-const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-2.0-flash-lite', 'gemini-2.5-flash'];
+const FALLBACK_MODELS = [
+  'gemini-1.5-flash-latest', 
+  'gemini-1.5-pro-latest',
+  'gemini-flash-latest', 
+  'gemini-pro'
+];
 
 const askGemini = async (prompt: string): Promise<any> => {
   let lastError: any;

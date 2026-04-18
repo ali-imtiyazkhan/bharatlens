@@ -42,117 +42,141 @@ export default function SiteExplorerPage() {
   }, [siteName]);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#080808', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', background: '#080808', display: 'flex', flexDirection: 'column', color: '#fff', fontFamily: "'Outfit', sans-serif" }}>
       
-      <div style={{ height: '40vh', position: 'relative', background: 'linear-gradient(to bottom, transparent, #080808)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '32px 64px' }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'url(https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=2670&auto=format&fit=crop) center/cover', opacity: 0.3, zIndex: 0 }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(8,8,8,0.2) 0%, #080808 100%)', zIndex: 0 }} />
+      {/* Hero Section */}
+      <div style={{ height: '55vh', position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '64px' }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'url(https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=2670&auto=format&fit=crop) center/cover', zIndex: 0 }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #080808 0%, rgba(8,8,8,0.4) 50%, rgba(8,8,8,0.7) 100%)', zIndex: 1 }} />
 
-        <nav className="navbar" style={{ position: 'relative', zIndex: 10, background: 'none', border: 'none', padding: 0 }}>
-          <Link href="/explore" className="nav-brand" style={{ fontSize: 13, padding: '8px 16px', background: 'rgba(255,255,255,0.1)', borderRadius: 20, backdropFilter: 'blur(10px)', textDecoration: 'none' }}>
-            ← Back to Explore
+        <nav style={{ position: 'absolute', top: 32, left: 64, right: 64, zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Link href="/explore" style={{ fontSize: 12, fontWeight: 800, padding: '10px 20px', background: 'rgba(255,255,255,0.05)', borderRadius: 12, backdropFilter: 'blur(20px)', textDecoration: 'none', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }}>
+            ← BACK TO DISCOVERY
           </Link>
-          <div className="nav-controls">
-            <AuthControls />
-          </div>
+          <AuthControls />
         </nav>
 
-        <div style={{ position: 'relative', zIndex: 10 }}>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-            {details?.category && <span style={{ fontSize: 11, fontWeight: 800, background: 'rgba(201,168,76,0.2)', color: '#c9a84c', padding: '4px 10px', borderRadius: 4 }}>{details.category}</span>}
-            {details?.era && <span style={{ fontSize: 11, fontWeight: 800, background: 'rgba(255,255,255,0.1)', color: '#fff', padding: '4px 10px', borderRadius: 4 }}>{details.era}</span>}
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: 800 }}>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+            <span style={{ fontSize: 10, fontWeight: 900, background: '#c9a84c', color: '#000', padding: '4px 12px', borderRadius: 4, letterSpacing: '0.1em' }}>{details?.category?.toUpperCase() || 'HERITAGE'}</span>
+            <span style={{ fontSize: 10, fontWeight: 900, background: 'rgba(255,255,255,0.1)', color: '#fff', padding: '4px 12px', borderRadius: 4, letterSpacing: '0.1em', backdropFilter: 'blur(10px)' }}>{details?.era?.toUpperCase()}</span>
           </div>
-          <h1 style={{ fontSize: 56, fontWeight: 800, fontFamily: "'Outfit', sans-serif", color: '#fff', margin: 0, textTransform: 'capitalize' }}>
-            {siteName}
-          </h1>
-          <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', marginTop: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span>📍 {details?.state || 'India'}</span>
-            <span>⭐ {details?.rating || '4.5'}</span>
+          <h1 style={{ fontSize: 72, fontWeight: 900, margin: '0 0 16px', lineHeight: 1, letterSpacing: '-0.03em' }}>{siteName}</h1>
+          <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', gap: 20, fontWeight: 600 }}>
+            <span>📍 {details?.state || 'Ancient India'}</span>
+            <span style={{ color: '#c9a84c' }}>★ {details?.rating || '4.8'} ARCHAEOLOGIST RATING</span>
+          </div>
+
+          <div style={{ marginTop: 40, display: 'flex', gap: 16 }}>
+             <Link 
+               href={`/immersive/${rawId}`}
+               style={{ 
+                 background: '#c9a84c', color: '#000', padding: '18px 36px', borderRadius: 12, fontWeight: 900, textDecoration: 'none', fontSize: 14, letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 10px 30px rgba(201,168,76,0.3)'
+               }}
+             >
+               START VIRTUAL EXPEDITION 🥽
+             </Link>
+             <button 
+               onClick={() => setIsAudioOpen(true)}
+               style={{ 
+                 background: 'rgba(255,255,255,0.05)', color: '#fff', padding: '18px 28px', borderRadius: 12, fontWeight: 800, border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', fontSize: 14, backdropFilter: 'blur(20px)'
+               }}
+             >
+               LISTEN TO TRANSCRIPT 🎧
+             </button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, padding: '40px 64px', display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 64, zIndex: 10 }}>
+      <div style={{ flex: 1, padding: '80px 64px', display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: 80, zIndex: 10 }}>
         
         {/* Left Column: History */}
         <div>
-          <h2 style={{ fontSize: 24, fontWeight: 800, fontFamily: "'Outfit', sans-serif", color: '#e8e4dc', marginBottom: 24 }}>History & Heritage</h2>
-          
-          {loading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, opacity: 0.5 }}>
-              <div style={{ height: 16, background: 'rgba(255,255,255,0.1)', borderRadius: 4, width: '100%', animation: 'pulse 1.5s infinite' }} />
-              <div style={{ height: 16, background: 'rgba(255,255,255,0.1)', borderRadius: 4, width: '90%', animation: 'pulse 1.5s infinite' }} />
-              <div style={{ height: 16, background: 'rgba(255,255,255,0.1)', borderRadius: 4, width: '95%', animation: 'pulse 1.5s infinite' }} />
-            </div>
-          ) : (
-            <p style={{ fontSize: 15, lineHeight: 1.8, color: 'rgba(255,255,255,0.7)' }}>
-              {details?.fullHistory}
-            </p>
-          )}
+          <div style={{ marginBottom: 64 }}>
+            <h2 style={{ fontSize: 28, fontWeight: 900, marginBottom: 24, letterSpacing: '-0.02em' }}>HISTORICAL ARCHIVE</h2>
+            {loading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, opacity: 0.5 }}>
+                <div style={{ height: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 4, width: '100%' }} />
+                <div style={{ height: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 4, width: '90%' }} />
+              </div>
+            ) : (
+              <p style={{ fontSize: 17, lineHeight: 1.8, color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
+                {details?.fullHistory}
+              </p>
+            )}
+          </div>
 
-          <h2 style={{ fontSize: 24, fontWeight: 800, fontFamily: "'Outfit', sans-serif", color: '#e8e4dc', marginTop: 48, marginBottom: 24 }}>Experiences</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
-            <button 
-              onClick={() => setIsAudioOpen(true)}
-              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s', textAlign: 'left', cursor: 'pointer' }}
-            >
-              <div style={{ fontSize: 24, marginBottom: 8 }}>🎧</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: '#fff', fontFamily: "'Outfit', sans-serif" }}>Audio Tour</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>Listen to the story as you walk.</div>
-            </button>
-            <Link href="/ar-camera" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s' }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>📷</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: '#fff', fontFamily: "'Outfit', sans-serif" }}>AR Camera</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>Translate signs and unlock secrets.</div>
+          <h2 style={{ fontSize: 28, fontWeight: 900, marginBottom: 32, letterSpacing: '-0.02em' }}>AVAILABLE MODULES</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
+            <Link href="/ar-camera" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', padding: 32, borderRadius: 24, textDecoration: 'none', transition: 'all 0.3s' }}>
+              <div style={{ fontSize: 32, marginBottom: 16 }}>📷</div>
+              <div style={{ fontSize: 16, fontWeight: 900, color: '#fff', marginBottom: 8 }}>AR Analyzer</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6 }}>Real-time translation and architectural breakdown.</div>
             </Link>
-            <Link href="/heritage" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.1) 0%, rgba(0,0,0,0.5) 100%)', border: '1px solid rgba(201,168,76,0.3)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s' }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>📜</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: '#c9a84c', fontFamily: "'Outfit', sans-serif" }}>Heritage Voices</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>Talk to historical figures at this site.</div>
+            <Link href="/heritage" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.1) 0%, rgba(0,0,0,0) 100%)', border: '1px solid rgba(201,168,76,0.2)', padding: 32, borderRadius: 24, textDecoration: 'none', transition: 'all 0.3s' }}>
+              <div style={{ fontSize: 32, marginBottom: 16 }}>📜</div>
+              <div style={{ fontSize: 16, fontWeight: 900, color: '#c9a84c', marginBottom: 8 }}>Heritage Voices</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6 }}>Engage in AI dialogues with figures from this era.</div>
             </Link>
-            <Link href="/archive" style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(0,0,0,0.5) 100%)', border: '1px solid rgba(59,130,246,0.3)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s' }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>🎙️</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: '#3b82f6', fontFamily: "'Outfit', sans-serif" }}>Living Archive</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>Listen to local elders tell untold stories.</div>
-            </Link>
-            <Link href="/journey" style={{ background: 'linear-gradient(135deg, rgba(168,85,247,0.1) 0%, rgba(0,0,0,0.5) 100%)', border: '1px solid rgba(168,85,247,0.3)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s' }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>🗺️</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: '#a855f7', fontFamily: "'Outfit', sans-serif" }}>Insider Journey</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>Navigate like a local with crowd-sourced tips.</div>
+            <Link href="/archive" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', padding: 32, borderRadius: 24, textDecoration: 'none', transition: 'all 0.3s' }}>
+              <div style={{ fontSize: 32, marginBottom: 16 }}>🎙️</div>
+              <div style={{ fontSize: 16, fontWeight: 900, color: '#fff', marginBottom: 8 }}>Oral History</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6 }}>Listen to local storytellers and preserved archives.</div>
             </Link>
           </div>
         </div>
 
-        {/* Right Column: Verification & Tools */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        {/* Right Column: Meta & Verification */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
           
-          {/* Blockchain Verified Badge */}
-          <div style={{ background: 'linear-gradient(135deg, rgba(74,222,128,0.1) 0%, rgba(0,0,0,0.5) 100%)', border: '1px solid rgba(74,222,128,0.3)', borderRadius: 16, padding: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-              <div style={{ width: 40, height: 40, background: 'rgba(74,222,128,0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4ade80' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 24, padding: 32 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+              <div style={{ width: 44, height: 44, background: 'rgba(74,222,128,0.1)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4ade80' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
               </div>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#4ade80', fontFamily: "'Outfit', sans-serif" }}>Authenticity Verified</div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>Ministry of Culture, India</div>
+                <div style={{ fontSize: 15, fontWeight: 900, color: '#4ade80' }}>SECURE VERIFICATION</div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontWeight: 800 }}>GOVERNMENT CERTIFIED ARCHIVE</div>
               </div>
             </div>
             
             {details && (
-              <>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Tx Hash</div>
-                <div style={{ fontSize: 11, color: '#fff', fontFamily: 'monospace', background: 'rgba(0,0,0,0.3)', padding: '4px 8px', borderRadius: 4, letterSpacing: '0.05em', wordBreak: 'break-all' }}>
-                  {details.blockchainHash}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div>
+                  <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 900, letterSpacing: '0.1em', marginBottom: 6 }}>BLOCKCHAIN PROOF</div>
+                  <div style={{ fontSize: 11, color: '#fff', fontFamily: 'monospace', background: 'rgba(0,0,0,0.4)', padding: '12px', borderRadius: 8, wordBreak: 'break-all', border: '1px solid rgba(255,255,255,0.03)' }}>
+                    {details.blockchainHash}
+                  </div>
                 </div>
-                <div style={{ textAlign: 'right', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 8 }}>Verified on {details.verifiedDate}</div>
-              </>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10, fontWeight: 800, color: 'rgba(255,255,255,0.3)' }}>
+                  <span>NETWORK: POLYGON POS</span>
+                  <span>{details.verifiedDate}</span>
+                </div>
+              </div>
             )}
           </div>
 
-          <button style={{ width: '100%', background: '#c9a84c', color: '#000', border: 'none', padding: '16px', borderRadius: 12, fontWeight: 800, fontFamily: "'Outfit', sans-serif", fontSize: 14, cursor: 'pointer' }}>
-            Add to My Planner ＋
-          </button>
+          <Link 
+            href="/planner"
+            style={{ 
+              width: '100%', background: '#fff', color: '#000', border: 'none', padding: '20px', borderRadius: 16, fontWeight: 900, fontSize: 14, cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'block', boxShadow: '0 20px 40px rgba(255,255,255,0.1)'
+            }}
+          >
+            ADD TO TRAVEL PLANNER ＋
+          </Link>
+
+          {/* Site Stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+             <div style={{ padding: 20, background: 'rgba(255,255,255,0.02)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 900, marginBottom: 8 }}>LIVE CROWD</div>
+                <div style={{ fontSize: 14, fontWeight: 900, color: '#4ade80' }}>LOW (12%)</div>
+             </div>
+             <div style={{ padding: 20, background: 'rgba(255,255,255,0.02)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 900, marginBottom: 8 }}>CLIMATE</div>
+                <div style={{ fontSize: 14, fontWeight: 900 }}>{details?.weather || 'SUNNY'} {details?.temp || '28°C'}</div>
+             </div>
+          </div>
         </div>
 
       </div>
@@ -166,3 +190,4 @@ export default function SiteExplorerPage() {
     </div>
   );
 }
+

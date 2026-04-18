@@ -23,6 +23,42 @@ const figures = [
     state: 'Uttar Pradesh',
     image: 'https://images.unsplash.com/photo-1707056637380-575ec65c82de?q=80&w=2000&auto=format&fit=crop',
     description: 'Converse with the fierce Queen of Jhansi. Discover her bravery during the Indian Rebellion of 1857.',
+  },
+  {
+    id: 'ashoka',
+    name: 'Emperor Ashoka',
+    era: '304 – 232 BCE',
+    site: 'Sanchi Stupa',
+    state: 'Madhya Pradesh',
+    image: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?q=80&w=2000&auto=format&fit=crop',
+    description: 'Meet the Mauryan Emperor who renounced violence after the Kalinga War. Discuss Dhamma, his rock edicts, and the path of non-violence.',
+  },
+  {
+    id: 'birbal',
+    name: 'Raja Birbal',
+    era: '1528 – 1586 CE',
+    site: 'Fatehpur Sikri',
+    state: 'Uttar Pradesh',
+    image: 'https://images.unsplash.com/photo-1585135497273-1a86d9d81b88?q=80&w=2000&auto=format&fit=crop',
+    description: 'Challenge the wittiest advisor in Akbar\'s court. Birbal will answer your hardest questions with humor and wisdom.',
+  },
+  {
+    id: 'tipu',
+    name: 'Tipu Sultan',
+    era: '1750 – 1799 CE',
+    site: 'Srirangapatna',
+    state: 'Karnataka',
+    image: 'https://images.unsplash.com/photo-1600100397608-ef80f6a956c5?q=80&w=2000&auto=format&fit=crop',
+    description: 'Speak with the Tiger of Mysore. Learn about his military rocket innovations and his fierce resistance against the British.',
+  },
+  {
+    id: 'bhagat',
+    name: 'Bhagat Singh',
+    era: '1907 – 1931 CE',
+    site: 'Jallianwala Bagh',
+    state: 'Punjab',
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=2000&auto=format&fit=crop',
+    description: 'Converse with the revolutionary who shook the British Empire. Discuss his writings, his sacrifice, and his vision for a free India.',
   }
 ];
 
