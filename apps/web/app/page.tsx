@@ -1,101 +1,203 @@
-import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
+"use client";
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Globe from "../components/Globe";
 
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
+export default function LandingPage() {
+  const [time, setTime] = useState("");
+
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+      const ist = new Date(
+        now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+      );
+      let h = ist.getHours();
+      const m = ist.getMinutes();
+      const ampm = h >= 12 ? "p.m." : "a.m.";
+      h = h % 12 || 12;
+      setTime(`IST ${h}:${String(m).padStart(2, "0")} ${ampm}`);
+    };
+    updateClock();
+    const id = setInterval(updateClock, 1000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
-
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.dev/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+    <div className="page">
+      {/* Navbar */}
+      <nav className="navbar">
+        <Link href="/" className="nav-brand">
+          BHARAT
+          <br />
+          LENS
+        </Link>
+        <div className="nav-links-center">
+          <Link href="/explore">Destinations</Link>
+          <Link href="/tours">Virtual Tours</Link>
+          <Link href="/planner">AI Planner</Link>
         </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
+        <div className="nav-controls">
+          <button className="lang-select">EN / HI</button>
+          <Link href="/login" className="btn-login">Sign In</Link>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <main className="hero">
+        {/* Left — Title */}
+        <div className="hero-left">
+          <span className="badge">AI-powered · India</span>
+          <h1>
+            <span className="title-script">Discover</span>
+            <span className="title-bold">
+              HERITAGE<span className="title-dot">.</span>
+            </span>
+          </h1>
+          <div className="cta-row">
+            <Link href="/dashboard" className="btn-fill">
+              Start exploring
+            </Link>
+            <button className="btn-outline">Watch demo</button>
+          </div>
+          <div className="stats-row">
+            <div className="stat">
+              <div className="stat-n">5K+</div>
+              <div className="stat-l">SITES</div>
+            </div>
+            <div className="stat">
+              <div className="stat-n">40+</div>
+              <div className="stat-l">LANGUAGES</div>
+            </div>
+            <div className="stat">
+              <div className="stat-n">100%</div>
+              <div className="stat-l">OFFLINE</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Center — Globe */}
+        <div className="globe-wrap">
+          <div className="ring ring2" />
+          <div className="ring ring1" />
+          <Globe size={280} />
+        </div>
+
+        {/* Right — Description */}
+        <div className="hero-desc">
+          <p>
+            BharatLens is an{" "}
+            <strong>AI-powered cultural tourism platform</strong> built for
+            India&apos;s heritage.
+          </p>
+          <p>
+            We combine <strong>AR translation</strong>, personalized{" "}
+            <strong>trip planning</strong>, and immersive{" "}
+            <strong>virtual tours</strong> so every traveler — regardless of
+            language or budget — can experience India&apos;s rich history.
+          </p>
+          <p>
+            Point your camera at any monument or sign and let our AI do the
+            rest.
+          </p>
+        </div>
       </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.dev?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.dev →
-        </a>
+
+      {/* Features Section */}
+      <section className="section">
+        <span className="section-label">01 ⁄ PLATFORM CAPABILITIES</span>
+        <h2 className="section-title">
+          Breaking barriers with <span>AI</span> and immersive tech.
+        </h2>
+        
+        <div className="features-grid">
+          <div className="feature-card">
+            <div className="feature-icon">❖</div>
+            <h3 className="feature-title">AR Translation Lens</h3>
+            <p className="feature-desc">Point your camera at Hindi, Sanskrit, or Urdu plaques. Read translations projected dynamically in your native language directly on your screen without internet.</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">◉</div>
+            <h3 className="feature-title">Virtual 3D Tours</h3>
+            <p className="feature-desc">Can't travel? Explore majestic forts and ancient temples via high-resolution 3D virtual reconstructions crafted natively inside your browser.</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">⎔</div>
+            <h3 className="feature-title">AI Tech Planner</h3>
+            <p className="feature-desc">Simply list your interests, days, and budget constraint. Our AI generates a meticulous day-by-day interactive itinerary perfectly optimized for logic and crowd densities.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="section">
+        <span className="section-label">02 ⁄ THE WORKFLOW</span>
+        <h2 className="section-title">
+          Explore confidently in <span>Three Steps</span>.
+        </h2>
+        <div className="steps-container">
+          <div className="steps-list">
+            <div className="step-item">
+              <div className="step-number">I</div>
+              <div className="step-content">
+                <h3>Build your AI Itinerary</h3>
+                <p>Provide your dates and preferences so our algorithm can chart the perfect historic route mapped dynamically to weather and crowd densities.</p>
+              </div>
+            </div>
+            <div className="step-item">
+              <div className="step-number">II</div>
+              <div className="step-content">
+                <h3>Open the Lens</h3>
+                <p>Arrive at the site and tap your camera. Let our offline-first AI translate monument inscriptions and narrate historic stories effortlessly.</p>
+              </div>
+            </div>
+            <div className="step-item">
+              <div className="step-number">III</div>
+              <div className="step-content">
+                <h3>Earn Tokenized Rewards</h3>
+                <p>Contribute reviews, scan artifacts, and earn platform tokens that discount future local tour guide sessions.</p>
+              </div>
+            </div>
+          </div>
+          <div className="interactive-wrapper" style={{ padding: 0, overflow: 'hidden' }}>
+            <video 
+              src="/demo.mp4" 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="footer">
+        <div className="footer-time">
+          Local time
+          <br />
+          <span>{time}</span>
+        </div>
+        <div className="footer-socials">
+          <a href="https://github.com" target="_blank" rel="noreferrer">
+            GitHub
+          </a>
+          <a href="https://twitter.com" target="_blank" rel="noreferrer">
+            Twitter
+          </a>
+          <a href="https://linkedin.com" target="_blank" rel="noreferrer">
+            LinkedIn
+          </a>
+          <a href="/blog">Blog</a>
+        </div>
+        <div />
+        <div className="footer-copy">
+          © 2025
+          <br />
+          BHARATLENS
+        </div>
       </footer>
     </div>
   );
