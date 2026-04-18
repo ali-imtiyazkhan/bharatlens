@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  language      String    @default("en")
+  budget        String?
+  interests     String[]
+  tokens        Int       @default(0)
+  createdAt     DateTime  @default(now())
+
+  itineraries   Itinerary[]
+  visits        Visit[]
+  rewards       Reward[]
+  reviews       Review[]
+}
+
+model Heritage {
+  id            String    @id @default(cuid())
+  name          String
+  description   String
+  location      String
+  latitude      Float
+  longitude     Float
+  city          String
+  state         String
+  category      String    // monument, artifact, temple, etc
+  images        String[]
+  model3dUrl    String?
+  audioUrl      String?
+  languages     Json      // { en: "...", hi: "...", fr: "..." }
+  isVerified    Boolean   @default(false)
+  blockchainId  String?
+  createdAt     DateTime  @default(now())
+
+  visits        Visit[]
+  reviews       Review[]
+  tours         VirtualTour[]
+}
+
+model Itinerary {
+  id            String    @id @default(cuid())
+  userId        String
+  title         String
+  destination   String
+  days          Int
+  budget        String
+  plan          Json      // AI generated plan
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id])
+}
+
+model VirtualTour {
+  id            String    @id @default(cuid())
+  heritageId    String
+  title         String
+  sceneUrl      String    // 3D scene file
+  thumbnailUrl  String
+  duration      Int       // in minutes
+  createdAt     DateTime  @default(now())
+
+  heritage      Heritage  @relation(fields: [heritageId], references: [id])
+}
+
+model Visit {
+  id            String    @id @default(cuid())
+  userId        String
+  heritageId    String
+  visitedAt     DateTime  @default(now())
+  tokensEarned  Int       @default(10)
+
+  user          User      @relation(fields: [userId], references: [id])
+  heritage      Heritage  @relation(fields: [heritageId], references: [id])
+}
+
+model Review {
+  id            String    @id @default(cuid())
+  userId        String
+  heritageId    String
+  rating        Int
+  comment       String?
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id])
+  heritage      Heritage  @relation(fields: [heritageId], references: [id])
+}
+
+model Reward {
+  id            String    @id @default(cuid())
+  userId        String
+  type          String    // visit, review, share, streak
+  tokens        Int
+  earnedAt      DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id])
+}
+
+model Translation {
+  id            String    @id @default(cuid())
+  original      String
+  translated    String
+  fromLang      String
+  toLang        String
+  type          String    // text, speech, image
+  createdAt     DateTime  @default(now())
+}

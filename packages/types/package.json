@@ -1,10 +1,9 @@
 {
-  "name": "@bharatlens/ui",
+  "name": "@bharatlens/types",
   "version": "0.0.0",
   "private": true,
   "main": "src/index.ts",
   "dependencies": {
-    "react": "latest",
-    "framer-motion": "latest"
+    "typescript": "latest"
   }
 }
