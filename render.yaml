@@ -5,7 +5,7 @@ services:
     plan: free
     region: oregon 
     rootDir: .
-    buildCommand: pnpm install && pnpm run db:generate && pnpm --filter api build
+    buildCommand: pnpm install && pnpm exec turbo run db:generate build --filter=api
     startCommand: pnpm --filter api start
     envVars:
       - key: NODE_VERSION
@@ -17,7 +17,7 @@ services:
           name: bharatlens-db
           property: connectionString
       - key: FRONTEND_URL
-        value: https://bharatlens.vercel.app # Change this to your actual Vercel URL
+        value: https://bharatlens.vercel.app
       - key: GEMINI_API_KEY
         sync: false
 

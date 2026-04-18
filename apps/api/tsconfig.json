@@ -8,7 +8,8 @@
     "baseUrl": ".",
     "paths": {
       "@bharatlens/db": ["../../packages/db/dist"]
-    }
+    },
+    "rootDirs": ["src", "../../packages/db/dist"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
