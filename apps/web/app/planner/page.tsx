@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import AuthControls from "../../components/AuthControls";
 
@@ -47,6 +47,34 @@ interface InsightsData {
   news: { headline: string; source: string }[];
 }
 
+const EventImage = ({ location }: { location: string }) => {
+  const [img, setImg] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    const fetchImg = async () => {
+      try {
+        const queryTerm = location.split(",")[0].trim();
+        const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(queryTerm)}&prop=pageimages&format=json&pithumbsize=600&origin=*`);
+        const data = await res.json();
+        const pages = data.query.pages;
+        const firstPage = Object.values(pages)[0] as any;
+        if (active && firstPage && firstPage.thumbnail) {
+          setImg(firstPage.thumbnail.source);
+        }
+      } catch (e) {}
+    };
+    fetchImg();
+    return () => { active = false; };
+  }, [location]);
+
+  if (!img) return null;
+
+  return (
+    <div style={{ marginTop: "16px", width: "100%", height: "180px", borderRadius: "12px", backgroundImage: `url(${img})`, backgroundSize: "cover", backgroundPosition: "center", border: "1px solid rgba(255,255,255,0.08)" }} />
+  );
+};
+
 export default function PlannerPage() {
   const [destination, setDestination] = useState("");
   const [budget, setBudget] = useState("Mid-range");
@@ -64,14 +92,15 @@ export default function PlannerPage() {
 
   const fetchImage = async (query: string) => {
     try {
-      const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(query)}&prop=pageimages&format=json&pithumbsize=1000&origin=*`);
+      const queryTerm = query.split(",")[0].trim();
+      const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(queryTerm)}&prop=pageimages&format=json&pithumbsize=1200&origin=*`);
       const data = await res.json();
       const pages = data.query.pages;
       const firstPage = Object.values(pages)[0] as any;
       if (firstPage && firstPage.thumbnail) return firstPage.thumbnail.source;
-      return "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=80&w=1600";
+      return null;
     } catch {
-      return "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=80&w=1600";
+      return null;
     }
   };
 
@@ -395,6 +424,7 @@ export default function PlannerPage() {
                             )}
                           </div>
                           <div className="event-desc">{event.description}</div>
+                          <EventImage location={event.location} />
                         </div>
                       </div>
                     ))}
