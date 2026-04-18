@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import plannerRoutes from './routes/planner';
 import authRoutes from './routes/auth';
+import exploreRoutes from './routes/explore';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/planner', plannerRoutes);
+app.use('/api/explore', exploreRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

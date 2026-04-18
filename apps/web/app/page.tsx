@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
+import AuthControls from "../components/AuthControls";
+import CinematicIntro from "../components/CinematicIntro";
 
 const MARQUEE_ITEMS = [
   "TAJ MAHAL","AMBER FORT","QUTUB MINAR","KHAJURAHO",
@@ -29,8 +31,6 @@ const STATS = [
 ];
 
 export default function Home() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animRef   = useRef<number>(0);
   const [clock, setClock] = useState("IST --:-- --");
 
   /* ── Clock ── */
@@ -46,79 +46,6 @@ export default function Home() {
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, []);
-
-  /* ── Globe ── */
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const W = 260, H = 260, R = 116, cx = W / 2, cy = H / 2;
-    let t = 0;
-
-    const draw = () => {
-      ctx.clearRect(0, 0, W, H);
-
-      // base
-      ctx.save();
-      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.clip();
-      const bg = ctx.createRadialGradient(cx - 25, cy - 35, 8, cx, cy, R);
-      bg.addColorStop(0, "#e8d8a0"); bg.addColorStop(0.25, "#a0c8e8");
-      bg.addColorStop(0.5, "#c0a0e0"); bg.addColorStop(0.75, "#e0a0b8");
-      bg.addColorStop(1, "#80c0a8");
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-
-      // streaks
-      for (let i = 0; i < 12; i++) {
-        const a = ((t * 0.35 + i * 30) * Math.PI) / 180;
-        const g = ctx.createLinearGradient(
-          cx + Math.cos(a) * R * 0.2, cy + Math.sin(a) * R * 0.2,
-          cx + Math.cos(a + Math.PI) * R, cy + Math.sin(a + Math.PI) * R
-        );
-        const h2 = (i * 30 + t * 1.5) % 360;
-        g.addColorStop(0, `hsla(${h2},75%,82%,0)`);
-        g.addColorStop(0.35, `hsla(${h2},88%,78%,0.5)`);
-        g.addColorStop(0.65, `hsla(${(h2+50)%360},82%,74%,0.38)`);
-        g.addColorStop(1, `hsla(${(h2+110)%360},72%,80%,0)`);
-        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      }
-
-      // gold sheen
-      const gs = ctx.createLinearGradient(cx - R, cy, cx + R, cy);
-      gs.addColorStop(0, "rgba(201,168,76,0)");
-      gs.addColorStop(0.5, `rgba(201,168,76,${0.08 + 0.04 * Math.sin(t * 0.02)})`);
-      gs.addColorStop(1, "rgba(201,168,76,0)");
-      ctx.fillStyle = gs; ctx.fillRect(0, 0, W, H);
-
-      // specular
-      const sh = ctx.createRadialGradient(cx-50, cy-55, 4, cx-28, cy-32, R*0.72);
-      sh.addColorStop(0, "rgba(255,255,255,0.82)");
-      sh.addColorStop(0.2, "rgba(255,255,255,0.22)");
-      sh.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = sh; ctx.fillRect(0, 0, W, H);
-      ctx.restore();
-
-      // ring
-      ctx.save();
-      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(201,168,76,0.4)"; ctx.lineWidth = 1; ctx.stroke();
-      ctx.restore();
-
-      // rim
-      ctx.save();
-      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.clip();
-      const rim = ctx.createRadialGradient(cx, cy, R * 0.5, cx, cy, R);
-      rim.addColorStop(0, "rgba(0,0,0,0)"); rim.addColorStop(1, "rgba(0,0,0,0.5)");
-      ctx.fillStyle = rim; ctx.fillRect(0, 0, W, H);
-      ctx.restore();
-
-      t += 0.6;
-      animRef.current = requestAnimationFrame(draw);
-    };
-
-    draw();
-    return () => cancelAnimationFrame(animRef.current);
   }, []);
 
   const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
@@ -148,14 +75,13 @@ export default function Home() {
           <span className={styles.logoText}>BHARATLENS</span>
         </div>
         <div className={styles.navCenter}>
-          {["Home","Explore","Heritage","Virtual Tours","Translate"].map((l, i) => (
-            <Link key={l} href={i === 0 ? "/" : `/${l.toLowerCase().replace(" ","-")}`}
-              className={`${styles.navLink} ${i === 0 ? styles.navActive : ""}`}>{l}</Link>
-          ))}
+          <Link href="/" className={`${styles.navLink} ${styles.navActive}`}>Home</Link>
+          <Link href="/explore" className={styles.navLink}>Explore</Link>
+          <Link href="/planner" className={styles.navLink}>AI Planner</Link>
+          <Link href="/virtual-tours" className={styles.navLink}>Virtual Tours</Link>
         </div>
         <div className={styles.navRight}>
-          <Link href="/login" className={styles.navBtn}>Log in</Link>
-          <Link href="/register" className={`${styles.navBtn} ${styles.navPrimary}`}>Get started</Link>
+          <AuthControls />
         </div>
       </nav>
 
@@ -189,12 +115,8 @@ export default function Home() {
           <button className={styles.ctaSecondary}>WATCH DEMO</button>
         </div>
 
-        <div className={styles.globeStage}>
-          <div className={`${styles.globeRing} ${styles.ringOuter}`}>
-            <div className={styles.globeTick} />
-          </div>
-          <div className={`${styles.globeRing} ${styles.ringMid}`} />
-          <canvas ref={canvasRef} width={260} height={260} className={styles.globeCanvas} />
+        <div style={{ width: '100%', maxWidth: 900, margin: '0 auto 52px' }}>
+          <CinematicIntro />
         </div>
 
         <div className={styles.statsStrip}>

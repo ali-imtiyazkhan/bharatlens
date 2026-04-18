@@ -137,8 +137,9 @@ export default function DiscoverPage() {
         </Link>
         <div className="nav-links-center">
           <Link href="/explore">Destinations</Link>
-          <Link href="/tours">Virtual Tours</Link>
+          <Link href="/virtual-tours">Virtual Tours</Link>
           <Link href="/planner">AI Planner</Link>
+          <Link href="/blog">Blog</Link>
         </div>
         <div className="nav-controls">
           <Link href="/planner" className="btn-outline" style={{ fontSize: 10, padding: "6px 14px" }}>

@@ -190,8 +190,9 @@ export default function PlannerPage() {
         </Link>
         <div className="nav-links-center">
           <Link href="/explore">Destinations</Link>
-          <Link href="/tours">Virtual Tours</Link>
+          <Link href="/virtual-tours">Virtual Tours</Link>
           <Link href="/planner" style={{ color: "#e8e4dc" }}>AI Planner</Link>
+          <Link href="/blog">Blog</Link>
         </div>
         <div className="nav-controls">
           <Link href="/planner/discover" className="btn-outline" style={{ fontSize: 10, padding: "6px 14px" }}>
