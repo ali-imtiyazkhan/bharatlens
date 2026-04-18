@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Outfit:wght@400;500;700;800&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap');
 
 *,
 *::before,
@@ -16,7 +16,7 @@ body {
 body {
   background: #0a0a0a;
   color: #e8e4dc;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -105,7 +105,7 @@ body {
 
 .btn-login {
   font-size: 11px;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 600;
   color: #0a0a0a;
   background: #e8e4dc;
@@ -126,7 +126,7 @@ body {
   position: relative;
   z-index: 5;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1.1fr 1fr;
   align-items: center;
   flex: 1;
   padding: 40px 32px 32px;
@@ -167,7 +167,7 @@ body {
 
 .title-bold {
   display: block;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-size: clamp(38px, 5vw, 58px);
   color: #e8e4dc;
@@ -191,7 +191,7 @@ body {
 .btn-fill {
   display: inline-block;
   font-size: 10px;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   letter-spacing: 0.06em;
   padding: 10px 22px;
@@ -210,7 +210,7 @@ body {
 
 .btn-outline {
   font-size: 10px;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   letter-spacing: 0.06em;
   padding: 10px 22px;
   border-radius: 2px;
@@ -325,7 +325,7 @@ body {
 }
 
 .section-title span {
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-style: normal;
   letter-spacing: -0.02em;
@@ -595,7 +595,7 @@ body {
   border-radius: 4px;
   color: #e8e4dc;
   font-size: 13px;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   outline: none;
   transition: all 0.2s;
 }
@@ -627,7 +627,7 @@ body {
   background: rgba(255, 255, 255, 0.03);
   color: rgba(255, 255, 255, 0.5);
   font-size: 11px;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -667,7 +667,7 @@ body {
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 .days-btn:hover {
@@ -681,7 +681,7 @@ body {
   color: #e8e4dc;
   min-width: 32px;
   text-align: center;
-  font-family: "Outfit", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 /* Interest pills */
@@ -698,7 +698,7 @@ body {
   background: rgba(255, 255, 255, 0.02);
   color: rgba(255, 255, 255, 0.45);
   font-size: 11px;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -735,7 +735,7 @@ body {
   color: #0a0a0a;
   font-size: 12px;
   font-weight: 700;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   letter-spacing: 0.04em;
   cursor: pointer;
   transition: all 0.3s;
@@ -792,7 +792,7 @@ body {
 }
 
 .empty-state h3 {
-  font-family: "Outfit", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 18px;
   color: #e8e4dc;
   margin-bottom: 10px;
@@ -834,7 +834,7 @@ body {
   font-size: 16px;
   font-weight: 800;
   color: #7dd4b0;
-  font-family: "Outfit", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 @keyframes pulseGrow {
@@ -865,7 +865,7 @@ body {
 }
 
 .itinerary-title {
-  font-family: "Outfit", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 24px;
   font-weight: 800;
   color: #e8e4dc;
@@ -884,7 +884,7 @@ body {
   background: rgba(125, 212, 176, 0.08);
   color: #7dd4b0;
   font-size: 11px;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -1006,7 +1006,7 @@ body {
   background: transparent;
   color: rgba(255, 255, 255, 0.4);
   font-size: 11px;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
@@ -1029,7 +1029,7 @@ body {
 }
 
 .day-title {
-  font-family: "Outfit", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 16px;
   font-weight: 700;
   color: #e8e4dc;
@@ -1210,7 +1210,7 @@ body {
   background: rgba(255, 255, 255, 0.02);
   color: rgba(255, 255, 255, 0.45);
   font-size: 11px;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -1282,7 +1282,7 @@ body {
 }
 
 .dest-name {
-  font-family: "Outfit", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #e8e4dc;
@@ -1331,7 +1331,7 @@ body {
   color: #0a0a0a;
   font-size: 11px;
   font-weight: 700;
-  font-family: "Inter", sans-serif;
+  font-family: "Montserrat", sans-serif;
   text-decoration: none;
   transition: all 0.3s;
 }

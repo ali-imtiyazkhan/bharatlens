@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Globe from "../components/Globe";
+import TravelCards from "../components/TravelCards";
+import WorkflowInteractive from "../components/WorkflowInteractive";
 import AuthControls from "../components/AuthControls";
 
 export default function LandingPage() {
@@ -78,30 +79,9 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Center — Globe */}
+        {/* Center — Travel Showcase */}
         <div className="globe-wrap">
-          <div className="ring ring2" />
-          <div className="ring ring1" />
-          <Globe size={280} />
-        </div>
-
-        {/* Right — Description */}
-        <div className="hero-desc">
-          <p>
-            BharatLens is an{" "}
-            <strong>AI-powered cultural tourism platform</strong> built for
-            India&apos;s heritage.
-          </p>
-          <p>
-            We combine <strong>AR translation</strong>, personalized{" "}
-            <strong>trip planning</strong>, and immersive{" "}
-            <strong>virtual tours</strong> so every traveler — regardless of
-            language or budget — can experience India&apos;s rich history.
-          </p>
-          <p>
-            Point your camera at any monument or sign and let our AI do the
-            rest.
-          </p>
+          <TravelCards />
         </div>
       </main>
 
@@ -161,15 +141,8 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <div className="interactive-wrapper" style={{ padding: 0, overflow: 'hidden' }}>
-            <video 
-              src="/demo.mp4" 
-              autoPlay 
-              loop 
-              muted 
-              playsInline 
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
+          <div className="interactive-wrapper" style={{ padding: 0, overflow: 'hidden', border: 'none', background: 'transparent' }}>
+            <WorkflowInteractive />
           </div>
         </div>
       </section>
