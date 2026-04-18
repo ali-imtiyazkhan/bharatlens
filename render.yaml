@@ -5,7 +5,7 @@ services:
     plan: free
     region: oregon 
     rootDir: .
-    buildCommand: pnpm install && pnpm exec turbo run db:generate build --filter=api && pnpm --filter @bharatlens/db run db:push -- --accept-data-loss
+    buildCommand: pnpm install && pnpm run db:generate && pnpm run db:push -- --accept-data-loss && pnpm exec turbo build --filter=api
     startCommand: pnpm --filter api start
     envVars:
       - key: NODE_VERSION

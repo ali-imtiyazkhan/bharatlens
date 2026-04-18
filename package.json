@@ -6,9 +6,9 @@
     "dev": "turbo dev",
     "start": "turbo run start",
     "lint": "turbo lint",
-    "db:push": "turbo run db:push",
-    "db:generate": "turbo run db:generate",
-    "db:seed": "pnpm --filter @bharatlens/db prisma db seed"
+    "db:push": "pnpm --filter @bharatlens/db db:push",
+    "db:generate": "pnpm --filter @bharatlens/db db:generate",
+    "db:seed": "pnpm --filter @bharatlens/db db:seed"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
