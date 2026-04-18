@@ -256,4 +256,33 @@ router.get('/test/ping', async (_req, res) => {
   }
 });
 
+router.post('/monthly-plan', async (req, res) => {
+  try {
+    const { savings, interests, language } = req.body;
+    if (!savings) {
+      return res.status(400).json({ error: 'Missing savings amount' });
+    }
+
+    const prompt = `You are a travel expert for BharatLens. The user has saved $${savings} this month for travel. Their interests are: ${interests ? interests.join(', ') : 'history, culture'}.
+Recommend ONE amazing Indian heritage trip they can take this month strictly within their $${savings} budget.
+
+Provide ONLY JSON:
+{
+  "monthlyPlan": {
+    "title": "A catchy title for the trip",
+    "destination": "City/Region",
+    "budgetUsed": "$X",
+    "reasoning": "Why this trip fits their budget and interests.",
+    "topAttractions": ["Attraction 1", "Attraction 2"]
+  }
+}`;
+
+    const data = await askGemini(prompt);
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error('Error in /monthly-plan:', error);
+    return res.status(500).json({ error: 'Failed to generate monthly plan' });
+  }
+});
+
 export default router;
