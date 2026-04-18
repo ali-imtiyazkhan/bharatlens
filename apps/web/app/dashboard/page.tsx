@@ -6,7 +6,7 @@ import AuthControls from '../../components/AuthControls';
 import { API_BASE } from '../../lib/api-config';
 
 export default function DashboardPage() {
-  const [savings, setSavings] = useState(300); 
+  const [savings, setSavings] = useState(300);
   const [profile, setProfile] = useState<any>(null);
   const [stats, setStats] = useState<any>(null);
   const [monthlyPlan, setMonthlyPlan] = useState<any>(null);
@@ -74,10 +74,10 @@ export default function DashboardPage() {
 
       <div style={{ flex: 1, padding: '32px 64px', overflowY: 'auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(350px, 1fr) 2fr', gap: '40px' }}>
-          
+
           {/* ── Left Column: Profile & AI Plan ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            
+
             {/* User Profile Summary */}
             <div style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
@@ -93,7 +93,7 @@ export default function DashboardPage() {
                   <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', fontFamily: "'Montserrat', sans-serif" }}>Level {stats?.level || '1'} • {stats?.tokens || 0} Tokens</div>
                 </div>
               </div>
-              
+
               <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
                 {(profile.interests || ['History', 'Culture']).map((i: string) => (
                   <span key={i} style={{ fontSize: 10, fontWeight: 700, padding: '4px 10px', background: 'rgba(201,168,76,0.15)', color: '#c9a84c', borderRadius: 12, fontFamily: "'Outfit', sans-serif" }}>{i}</span>
@@ -114,20 +114,20 @@ export default function DashboardPage() {
               <div style={{ fontSize: 11, fontWeight: 800, color: '#c9a84c', letterSpacing: '0.1em', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span>✨ AI MONTHLY PLAN</span>
               </div>
-              
+
               {monthlyPlan ? (
                 <div>
                   <h3 style={{ fontSize: 22, fontWeight: 800, color: '#fff', fontFamily: "'Outfit', sans-serif", margin: '0 0 8px 0', lineHeight: 1.2 }}>{monthlyPlan.title}</h3>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginBottom: 16 }}>📍 {monthlyPlan.destination} — Estimated Cost: <span style={{ color: '#4ade80', fontWeight: 700 }}>{monthlyPlan.budgetUsed}</span></div>
                   <p style={{ fontSize: 12, lineHeight: 1.6, color: 'rgba(255,255,255,0.7)', marginBottom: 20 }}>{monthlyPlan.reasoning}</p>
-                  
+
                   <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>Highlights:</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     {(monthlyPlan.topAttractions || []).map((att: string, i: number) => (
                       <div key={i} style={{ fontSize: 11, background: 'rgba(0,0,0,0.3)', padding: '8px 12px', borderRadius: 6, color: 'rgba(255,255,255,0.8)' }}>• {att}</div>
                     ))}
                   </div>
-                  
+
                   <button style={{ width: '100%', background: '#c9a84c', color: '#000', border: 'none', padding: '12px', borderRadius: 8, fontWeight: 800, marginTop: 24, cursor: 'pointer', fontFamily: "'Outfit', sans-serif" }}>
                     Build Full Itinerary
                   </button>
@@ -141,7 +141,7 @@ export default function DashboardPage() {
 
           {/* ── Right Column: Map & Features ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            
+
             {/* Quick Access Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
               {[
@@ -164,15 +164,15 @@ export default function DashboardPage() {
                 <h3 style={{ margin: 0, fontSize: 18, color: '#fff', fontFamily: "'Outfit', sans-serif" }}>Visited Heritage Map</h3>
                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>{profile.totalVisits || 0} Sites Explored</div>
               </div>
-              
+
               {/* Map background placeholder grid */}
               <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.1 }}>
                 <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#fff" strokeWidth="0.5" /></pattern></defs>
                 <rect width="100%" height="100%" fill="url(#grid)" />
               </svg>
-              
+
               <div style={{ position: 'absolute', top: '15%', left: '25%', width: '50%', height: '70%', border: '1px solid rgba(201,168,76,0.2)', borderRadius: '30% 40% 50% 20%', opacity: 0.4 }} />
-              
+
               {/* Mock Pins */}
               <div style={{ position: 'absolute', top: '40%', left: '40%', width: 12, height: 12, background: '#4ade80', borderRadius: '50%', boxShadow: '0 0 10px #4ade80' }} />
               <div style={{ position: 'absolute', top: '30%', left: '45%', width: 12, height: 12, background: '#c9a84c', borderRadius: '50%', boxShadow: '0 0 10px #c9a84c' }} />

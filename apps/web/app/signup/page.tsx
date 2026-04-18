@@ -38,7 +38,7 @@ export default function SignupPage() {
       localStorage.setItem('user', JSON.stringify(data.user));
 
       // Redirect to planner
-      router.push('/planner');
+      router.push('/dashboard');
     } catch (err: any) {
       setError(err.message);
     } finally {
