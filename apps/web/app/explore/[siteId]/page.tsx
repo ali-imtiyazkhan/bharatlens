@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import AuthControls from '../../../components/AuthControls';
+import AudioPlayer from '../../../components/AudioPlayer';
 
 export default function SiteExplorerPage() {
   const params = useParams();
@@ -12,6 +13,7 @@ export default function SiteExplorerPage() {
 
   const [loading, setLoading] = useState(true);
   const [details, setDetails] = useState<any>(null);
+  const [isAudioOpen, setIsAudioOpen] = useState(false);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -91,11 +93,14 @@ export default function SiteExplorerPage() {
 
           <h2 style={{ fontSize: 24, fontWeight: 800, fontFamily: "'Outfit', sans-serif", color: '#e8e4dc', marginTop: 48, marginBottom: 24 }}>Experiences</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
-            <Link href="/navigation" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s' }}>
+            <button 
+              onClick={() => setIsAudioOpen(true)}
+              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s', textAlign: 'left', cursor: 'pointer' }}
+            >
               <div style={{ fontSize: 24, marginBottom: 8 }}>🎧</div>
               <div style={{ fontSize: 14, fontWeight: 800, color: '#fff', fontFamily: "'Outfit', sans-serif" }}>Audio Tour</div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>Listen to the story as you walk.</div>
-            </Link>
+            </button>
             <Link href="/ar-camera" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', padding: 24, borderRadius: 16, textDecoration: 'none', transition: 'all 0.2s' }}>
               <div style={{ fontSize: 24, marginBottom: 8 }}>📷</div>
               <div style={{ fontSize: 14, fontWeight: 800, color: '#fff', fontFamily: "'Outfit', sans-serif" }}>AR Camera</div>
@@ -152,6 +157,12 @@ export default function SiteExplorerPage() {
 
       </div>
 
+      <AudioPlayer 
+        isOpen={isAudioOpen} 
+        onClose={() => setIsAudioOpen(false)} 
+        siteName={siteName} 
+        category={details?.category}
+      />
     </div>
   );
 }

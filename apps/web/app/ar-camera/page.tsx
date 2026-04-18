@@ -104,7 +104,21 @@ export default function ARCameraPage() {
             </>
           )}
           
-          <button onClick={() => setResult(null)} style={{ marginTop: 24, width: '100%', background: 'none', border: '1px solid rgba(255,255,255,0.2)', padding: 10, borderRadius: 8, color: '#fff', cursor: 'pointer', fontFamily: "'Outfit', sans-serif", fontWeight: 700 }}>Close</button>
+          {result.identification && (
+            <Link 
+              href={`/explore/${result.identification.toLowerCase().replace(/\s+/g, '-')}`}
+              style={{ 
+                marginTop: 24, width: '100%', background: '#c9a84c', border: 'none', 
+                padding: '14px', borderRadius: 8, color: '#000', cursor: 'pointer', 
+                fontFamily: "'Outfit', sans-serif", fontWeight: 800, textDecoration: 'none',
+                display: 'block', textAlign: 'center', fontSize: 13, letterSpacing: '0.05em'
+              }}
+            >
+              DIVE DEEPER ✦
+            </Link>
+          )}
+
+          <button onClick={() => setResult(null)} style={{ marginTop: 12, width: '100%', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', padding: 10, borderRadius: 8, color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: 11 }}>Cancel</button>
         </div>
       )}
 

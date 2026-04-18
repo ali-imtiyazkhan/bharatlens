@@ -59,10 +59,10 @@ router.post('/chat', async (req, res) => {
     const prompt = `
 ${figure.context}
 
-The user has asked you: "${message}"
-
 Respond strictly IN CHARACTER.
 You must simulate a "Retrieval-Augmented Generation (RAG)" system by citing the primary historical source you are pulling your answer from based on the knowledge base of your time. 
+
+Keep the response conversational and oratorical, as it will be read aloud. Use powerful, evocative language suitable for a leader or warrior of your era. Avoid long lists; focus on narrative.
 Do not break character. Do not admit to being an AI. 
 
 Provide your response in JSON format exactly like this:

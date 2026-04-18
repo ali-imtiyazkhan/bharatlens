@@ -21,6 +21,8 @@ export default function HeritageChatPage() {
   const [messages, setMessages] = useState<Array<{role: 'user'|'system', text: string, sources?: string[]}>>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -70,6 +72,38 @@ export default function HeritageChatPage() {
     setLoading(false);
   };
 
+  const speak = (text: string) => {
+    if (!voiceEnabled || !window.speechSynthesis) return;
+    
+    // Cancel any existing speech
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Choose a dignified voice
+    const voices = window.speechSynthesis.getVoices();
+    // Try to find a male voice for Akbar or similar
+    const preferredVoice = voices.find(v => v.name.includes('India') || v.name.includes('Google'));
+    if (preferredVoice) utterance.voice = preferredVoice;
+
+    utterance.pitch = figureId === 'akbar' ? 0.8 : 1.1; // Deep for Akbar, higher for Laxmibai
+    utterance.rate = 0.9; // Slightly slower for gravity
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Trigger speech when a new system message arrives
+  useEffect(() => {
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg && lastMsg.role === 'system' && !loading) {
+      speak(lastMsg.text);
+    }
+  }, [messages.length]);
+
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: '#050505', color: '#fff', fontFamily: "'Outfit', sans-serif" }}>
 
@@ -78,11 +112,28 @@ export default function HeritageChatPage() {
         <Link href="/heritage" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, fontWeight: 700, padding: '8px 16px', background: 'rgba(255,255,255,0.05)', borderRadius: 20 }}>
           ← End Conversation
         </Link>
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{ color: '#c9a84c', fontSize: 13, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{figure.site}</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>{figure.era}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+            {isSpeaking && (
+              <div style={{ display: 'flex', gap: 2 }}>
+                {[1,2,3].map(i => <div key={i} style={{ width: 2, height: 12, background: '#c9a84c', borderRadius: 1, animation: `wave 0.5s infinite ${i*0.1}s` }} />)}
+              </div>
+            )}
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{figure.era}</div>
+          </div>
         </div>
-        <div style={{ width: 80 }} /> {/* Spacer */}
+        <div>
+          <button 
+            onClick={() => {
+              setVoiceEnabled(!voiceEnabled);
+              if (voiceEnabled) window.speechSynthesis.cancel();
+            }}
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: voiceEnabled ? '#c9a84c' : 'rgba(255,255,255,0.3)', padding: '8px 12px', borderRadius: 12, cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+          >
+            {voiceEnabled ? '🔊 Voice On' : '🔇 Muted'}
+          </button>
+        </div>
       </nav>
 
       {/* Main Content Area */}
@@ -193,6 +244,10 @@ export default function HeritageChatPage() {
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-4px); }
+        }
+        @keyframes wave {
+          0%, 100% { height: 4px; }
+          50% { height: 12px; }
         }
       `}} />
     </div>
