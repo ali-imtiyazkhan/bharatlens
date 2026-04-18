@@ -21,14 +21,20 @@ import communityRoutes from './routes/communities';
 
 const app = express();
 
-app.use(cors());
+const FRONTEND_URL = process.env.FRONTEND_URL || '*';
+
+app.use(cors({
+  origin: FRONTEND_URL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.use(helmet());
 app.use(express.json());
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: '*', // In production, restrict to your frontend URL
+    origin: FRONTEND_URL,
     methods: ['GET', 'POST']
   }
 });

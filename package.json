@@ -4,10 +4,11 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
+    "start": "turbo run start",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:push": "turbo run db:push",
-    "db:generate": "turbo run db:generate"
+    "db:generate": "turbo run db:generate",
+    "db:seed": "pnpm --filter @bharatlens/db prisma db seed"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
