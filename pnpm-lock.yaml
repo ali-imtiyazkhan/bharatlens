@@ -177,6 +177,9 @@ importers:
         specifier: latest
         version: 6.0.3
     devDependencies:
+      '@bharatlens/config':
+        specifier: workspace:*
+        version: link:../config
       '@types/bcrypt':
         specifier: ^6.0.0
         version: 6.0.0

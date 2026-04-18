@@ -2,8 +2,10 @@
   "name": "@bharatlens/db",
   "version": "0.0.0",
   "private": true,
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "db:generate": "prisma generate",
     "db:push": "prisma db push"
   },
@@ -14,6 +16,7 @@
     "typescript": "latest"
   },
   "devDependencies": {
+    "@bharatlens/config": "workspace:*",
     "@types/bcrypt": "^6.0.0",
     "prisma": "^5.12.0"
   },

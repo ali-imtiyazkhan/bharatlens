@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "target": "es2022",
-    "module": "esnext",
+    "module": "Node16",
     "lib": ["es2022", "dom", "dom.iterable"],
     "declaration": true,
     "sourceMap": true,
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node16",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
