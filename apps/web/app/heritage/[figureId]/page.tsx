@@ -6,9 +6,15 @@ import { useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const getFigureMockData = (id: string) => {
-  if (id === 'akbar') return { name: 'Jalal-ud-din Muhammad Akbar', site: 'Fatehpur Sikri', era: 'Mughal Empire' };
-  if (id === 'laxmibai') return { name: 'Rani Laxmibai', site: 'Jhansi Fort', era: '1857 Rebellion' };
-  return { name: 'Historical Figure', site: 'Unknown Site', era: 'Unknown Era' };
+  const data: Record<string, { name: string, site: string, era: string }> = {
+    'akbar': { name: 'Jalal-ud-din Muhammad Akbar', site: 'Fatehpur Sikri', era: 'Mughal Empire' },
+    'laxmibai': { name: 'Rani Laxmibai', site: 'Jhansi Fort', era: '1857 Rebellion' },
+    'ashoka': { name: 'Emperor Ashoka', site: 'Sanchi Stupa', era: 'Mauryan Empire' },
+    'birbal': { name: 'Raja Birbal', site: 'Fatehpur Sikri', era: "Akbar's Court" },
+    'tipu': { name: 'Tipu Sultan', site: 'Srirangapatna', era: 'Kingdom of Mysore' },
+    'bhagat': { name: 'Bhagat Singh', site: 'Jallianwala Bagh', era: 'Freedom Struggle' },
+  };
+  return data[id] || { name: 'Historical Figure', site: 'Unknown Site', era: 'Unknown Era' };
 };
 
 export default function HeritageChatPage() {

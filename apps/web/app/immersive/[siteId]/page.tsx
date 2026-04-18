@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import ImmersiveViewer from '../../../components/ImmersiveViewer';
-import Artifact3DViewer from '../../../components/Artifact3DViewer';
+const Artifact3DViewer = dynamic(() => import('../../../components/Artifact3DViewer'), { ssr: false });
 import { motion, AnimatePresence } from 'framer-motion';
 import { Box, Map as MapIcon } from 'lucide-react';
 
@@ -147,6 +148,59 @@ export default function ImmersivePage() {
             <Box size={14} /> 3D ARTIFACT
           </button>
         </div>
+      </div>
+
+      {/* Floating Coordinates HUD */}
+      <div style={{ position: 'absolute', top: '50%', left: 40, transform: 'translateY(-50%)', display: 'flex', flexDirection: 'column', gap: 20, pointerEvents: 'none', zIndex: 10 }}>
+        <div style={{ opacity: 0.4 }}>
+          <div style={{ fontSize: 9, color: '#fff', marginBottom: 4, letterSpacing: '0.1em' }}>LATITUDE</div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: '#fff' }}>{site?.lat || '27.1751'}° N</div>
+        </div>
+        <div style={{ opacity: 0.4 }}>
+          <div style={{ fontSize: 9, color: '#fff', marginBottom: 4, letterSpacing: '0.1em' }}>LONGITUDE</div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: '#fff' }}>{site?.lng || '78.0421'}° E</div>
+        </div>
+        <div style={{ opacity: 0.4 }}>
+          <div style={{ fontSize: 9, color: '#fff', marginBottom: 4, letterSpacing: '0.1em' }}>ELEVATION</div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: '#fff' }}>171m MSL</div>
+        </div>
+      </div>
+
+      {/* AI Audio Narrator */}
+      <div style={{ position: 'absolute', bottom: 40, left: 40, zIndex: 20 }}>
+        <button 
+          onClick={() => {
+            if ('speechSynthesis' in window) {
+              if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                return;
+              }
+              const text = `You are now exploring ${site?.name || 'a heritage site'} in ${site?.state || 'India'}. Built during the ${site?.era || 'ancient'} period. ${site?.desc || 'This is one of India\'s most significant cultural landmarks.'}`;
+              const utterance = new SpeechSynthesisUtterance(text);
+              utterance.rate = 0.85;
+              utterance.pitch = 0.9;
+              window.speechSynthesis.speak(utterance);
+            }
+          }}
+          style={{ 
+            background: 'rgba(0,0,0,0.6)', 
+            backdropFilter: 'blur(20px)', 
+            border: '1px solid rgba(201,168,76,0.3)', 
+            borderRadius: 40,
+            padding: '14px 24px',
+            color: '#c9a84c',
+            fontSize: 11,
+            fontWeight: 800,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            letterSpacing: '0.1em',
+            transition: 'all 0.3s'
+          }}
+        >
+          🎙️ AI NARRATOR
+        </button>
       </div>
 
     </div>

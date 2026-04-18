@@ -162,14 +162,14 @@ export default function Navbar() {
         <AuthControls />
       </div>
 
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{__html: `
         .nav-dropdown-item:hover {
           background: rgba(255, 255, 255, 0.05);
         }
         .nav-dropdown-item:hover span {
           color: #c9a84c !important;
         }
-      `}</style>
+      `}} />
     </nav>
   );
 }

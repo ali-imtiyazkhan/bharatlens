@@ -5,35 +5,6 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 
-const localStories = [
-  {
-    id: '1',
-    author: 'Ramkishan ji',
-    age: 82,
-    site: 'Agrasen ki Baoli, Stepwell',
-    category: 'Eyewitness',
-    era: '1940s',
-    language: 'Hindi',
-    duration: '2:14',
-    title: 'The ghosts of the lower steps',
-    transcript: 'My grandfather used to tell me that the water here ran completely black during the monsoon of 1948. People thought it was cursed. The truth was, the dyers from the neighboring street used to wash their indigo fabric nearby during heavy rains...',
-    pointsEarned: 50,
-  },
-  {
-    id: '2',
-    author: 'Sunita Devi',
-    age: 76,
-    site: 'Old City Gates',
-    category: 'Craft Knowledge',
-    era: 'Contemporary',
-    language: 'Marwari',
-    duration: '4:01',
-    title: 'How we make the lac bangles',
-    transcript: 'The resin must be heated slowly over the coals. If you rush it, the color becomes dull. My family has been doing this since the maharajas time. It requires patience that nobody has anymore...',
-    pointsEarned: 50,
-  }
-];
-
 export default function LivingArchivePage() {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [stories, setStories] = useState<any[]>([]);

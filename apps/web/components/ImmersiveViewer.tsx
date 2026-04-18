@@ -39,6 +39,7 @@ export default function ImmersiveViewer({ imageUrl, hotspots = [] }: Props) {
     geometry.scale(-1, 1, 1);
 
     const textureLoader = new THREE.TextureLoader();
+    if (!imageUrl) return;
     const texture = textureLoader.load(imageUrl);
     const material = new THREE.MeshBasicMaterial({ map: texture });
     const mesh = new THREE.Mesh(geometry, material);
