@@ -57,9 +57,23 @@ export default function PlannerPage() {
   const [insightsLoading, setInsightsLoading] = useState(false);
   const [result, setResult] = useState<ItineraryResult | null>(null);
   const [insights, setInsights] = useState<InsightsData | null>(null);
+  const [destinationImage, setDestinationImage] = useState<string | null>(null);
   const [activeDay, setActiveDay] = useState(0);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
+
+  const fetchImage = async (query: string) => {
+    try {
+      const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(query)}&prop=pageimages&format=json&pithumbsize=1000&origin=*`);
+      const data = await res.json();
+      const pages = data.query.pages;
+      const firstPage = Object.values(pages)[0] as any;
+      if (firstPage && firstPage.thumbnail) return firstPage.thumbnail.source;
+      return "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=80&w=1600";
+    } catch {
+      return "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=80&w=1600";
+    }
+  };
 
   const toggleInterest = (interest: string) => {
     setSelectedInterests((prev) =>
@@ -83,6 +97,7 @@ export default function PlannerPage() {
     setLoading(true);
     setResult(null);
     setInsights(null);
+    setDestinationImage(null);
 
     try {
       const [planRes, insightsRes] = await Promise.all([
@@ -108,6 +123,9 @@ export default function PlannerPage() {
       const planData = await planRes.json();
       setResult(planData);
       setActiveDay(0);
+      
+      const imgUrl = await fetchImage(destination);
+      setDestinationImage(imgUrl);
 
       if (insightsRes.ok) {
         const insightsData = await insightsRes.json();
@@ -278,18 +296,38 @@ export default function PlannerPage() {
 
           {result && (
             <div className="itinerary-result">
-              {/* Header */}
-              <div className="itinerary-header">
-                <div>
-                  <h2 className="itinerary-title">{result.title}</h2>
-                  <p className="itinerary-meta">
-                    {result.days} days · {result.budget} · {result.destination}
-                  </p>
+              {/* Destination Image Cover with Header */}
+              {destinationImage && (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "260px",
+                    borderRadius: "16px",
+                    marginBottom: "32px",
+                    backgroundImage: `url(${destinationImage})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    position: "relative",
+                    boxShadow: "0 10px 40px rgba(0,0,0,0.5)",
+                    overflow: "hidden"
+                  }}
+                >
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)" }} />
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "28px", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                    <div>
+                      <h2 style={{ fontFamily: "Outfit, sans-serif", fontSize: "36px", fontWeight: 800, color: "#fff", margin: 0, marginBottom: "8px", letterSpacing: "-0.02em" }}>
+                        {result.title}
+                      </h2>
+                      <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "11px", color: "rgba(125,212,176,0.9)", margin: 0, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                        {result.days} days · {result.budget} · {result.destination}
+                      </p>
+                    </div>
+                    <button className="btn-share" onClick={handleShare} style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.2)", padding: "10px 18px", borderRadius: "8px", color: "#fff", cursor: "pointer", fontFamily: "Montserrat, sans-serif", fontSize: "11px", fontWeight: 700, transition: "background 0.2s" }}>
+                      {copied ? "✓ Copied!" : "Share ↗"}
+                    </button>
+                  </div>
                 </div>
-                <button className="btn-share" onClick={handleShare}>
-                  {copied ? "✓ Copied!" : "Share ↗"}
-                </button>
-              </div>
+              )}
 
               {/* Summary */}
               {result.plan?.summary && (
