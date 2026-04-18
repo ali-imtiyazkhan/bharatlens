@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import ImmersiveViewer from '../../../components/ImmersiveViewer';
 
 export default function ImmersivePage() {
@@ -12,8 +11,6 @@ export default function ImmersivePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch specifically the sites list from explore to find our selected site
-    // In a real app, this would be a specific /api/heritage/:id call
     fetch('/api/explore/sites', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -39,13 +36,10 @@ export default function ImmersivePage() {
   return (
     <div style={{ height: '100vh', width: '100vw', background: '#000', overflow: 'hidden', position: 'relative' }}>
       
-      {/* Immersive Background */}
       <ImmersiveViewer 
         imageUrl={site?.panoramaUrl || 'https://images.unsplash.com/photo-1599395293282-eeb7a921d7b1?q=80&w=2000'} 
         hotspots={site?.hotspots || []}
       />
-
-      {/* Navigation Overlay */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '32px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10 }}>
         <button 
           onClick={() => router.back()} 

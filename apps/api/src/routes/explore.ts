@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const router: Router = Router();
 const apiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(apiKey);
-const FALLBACK_MODELS = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
+const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro'];
 
 const FALLBACK_SITES = {
   sites: [
@@ -100,7 +100,7 @@ const askGemini = async (prompt: string): Promise<any> => {
 
 const askGeminiVision = async (base64Data: string, mimeType: string, prompt: string): Promise<any> => {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
     const imageParts = [
       {
         inlineData: {

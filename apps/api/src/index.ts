@@ -11,6 +11,7 @@ import profileRoutes from './routes/profile';
 import visitsRoutes from './routes/visits';
 import starsRoutes from './routes/stars';
 import socialRoutes from './routes/social';
+import journeyRoutes from './routes/journey';
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/visits', visitsRoutes);
 app.use('/api/stars', starsRoutes);
 app.use('/api/social', socialRoutes);
+app.use('/api/journey', journeyRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

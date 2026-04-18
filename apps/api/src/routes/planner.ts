@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 const apiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(apiKey);
-const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-2.0-flash-lite', 'gemini-2.5-flash'];
+const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro'];
 
 const askGemini = async (prompt: string): Promise<any> => {
   let lastError: any;
