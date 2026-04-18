@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
+import { API_BASE } from '../../lib/api-config';
 
 export default function DiscoverPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-
+  
   useEffect(() => {
     fetch(`${API_BASE}/api/social/discover`)
       .then(res => res.json())

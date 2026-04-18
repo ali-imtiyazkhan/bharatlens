@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Navbar from '../../components/Navbar';
+import { API_BASE } from '../../lib/api-config';
 
 export default function CommunitiesPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -13,7 +14,6 @@ export default function CommunitiesPage() {
   const [newCommunity, setNewCommunity] = useState({ name: '', description: '', interest: '' });
   const [tab, setTab] = useState<'discover' | 'mine'>('discover');
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   useEffect(() => {
     const stored = localStorage.getItem('user');

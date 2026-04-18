@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import AuthControls from "../../../components/AuthControls";
+import { API_BASE } from "../../../lib/api-config";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 interface PlannerEvent {
   time: string;

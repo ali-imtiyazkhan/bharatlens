@@ -8,6 +8,7 @@ import ProfileHero from '../../../components/profile/ProfileHero';
 import HighlightReel from '../../../components/profile/HighlightReel';
 import BadgeWall from '../../../components/profile/BadgeWall';
 import VisitFeed from '../../../components/profile/VisitFeed';
+import { API_BASE } from '../../../lib/api-config';
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null);
@@ -15,8 +16,6 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const params = useParams();
   const username = params?.username as string;
-  
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
   
   useEffect(() => {
     if (!username) return;

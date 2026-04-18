@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { API_BASE } from '../../lib/api-config';
 
 export default function ProfileHero({ profile: initialProfile }: { profile: any }) {
   const [profile, setProfile] = useState(initialProfile);
@@ -36,8 +37,6 @@ export default function ProfileHero({ profile: initialProfile }: { profile: any 
     navigator.clipboard.writeText(url);
     alert('Profile link copied to clipboard! 🔗');
   };
-
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const handleSave = async () => {
     setIsSaving(true);

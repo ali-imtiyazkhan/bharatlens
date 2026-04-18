@@ -3,15 +3,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AuthControls from '../../components/AuthControls';
+import { API_BASE } from '../../lib/api-config';
 
 export default function DashboardPage() {
-  const [savings, setSavings] = useState(300); // Mocked user savings
+  const [savings, setSavings] = useState(300); 
   const [profile, setProfile] = useState<any>(null);
   const [stats, setStats] = useState<any>(null);
   const [monthlyPlan, setMonthlyPlan] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   useEffect(() => {
     const fetchAllData = async () => {

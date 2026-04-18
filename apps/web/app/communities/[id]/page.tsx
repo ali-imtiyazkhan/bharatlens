@@ -8,6 +8,7 @@ import Navbar from '../../../components/Navbar';
 import AuthControls from '../../../components/AuthControls';
 import { Socket } from 'socket.io-client';
 import { Users, Send, Info, ChevronLeft, ShieldCheck } from 'lucide-react';
+import { API_BASE } from '../../../lib/api-config';
 
 export default function CommunityChat() {
   const { id } = useParams();
@@ -20,7 +21,7 @@ export default function CommunityChat() {
   const [showSidebar, setShowSidebar] = useState(true);
   const socketRef = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
 
   useEffect(() => {
     const stored = localStorage.getItem('user');

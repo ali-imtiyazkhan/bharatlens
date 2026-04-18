@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getSocket } from '../../lib/socket';
 import Navbar from '../../components/Navbar';
 import AuthControls from '../../components/AuthControls';
+import { API_BASE } from '../../lib/api-config';
 
 export default function ChatPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -50,7 +51,7 @@ export default function ChatPage() {
 
   const fetchInbox = async (uid: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/chat/inbox/${uid}`);
+      const res = await fetch(`${API_BASE}/api/chat/inbox/${uid}`);
       const data = await res.json();
       setInbox(data);
     } catch (e) { console.error(e); }
@@ -58,7 +59,7 @@ export default function ChatPage() {
 
   const fetchHistory = async (id1: string, id2: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/chat/history?me=${id1}&other=${id2}`);
+      const res = await fetch(`${API_BASE}/api/chat/history?me=${id1}&other=${id2}`);
       const data = await res.json();
       setMessages(data);
     } catch (e) { console.error(e); }
@@ -80,7 +81,7 @@ export default function ChatPage() {
 
     // Save to DB
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/chat/send`, {
+      await fetch(`${API_BASE}/api/chat/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(msgData)
@@ -113,7 +114,7 @@ export default function ChatPage() {
                 setSearchQuery(e.target.value);
                 if (e.target.value.length >= 2) {
                   try {
-                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/social/discover`);
+                    const res = await fetch(`${API_BASE}/api/social/discover`);
                     const users = await res.json();
                     setSearchResults(users.filter((u: any) => 
                       u.id !== currentUser.id && 

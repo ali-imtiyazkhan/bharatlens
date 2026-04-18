@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { API_BASE } from '../../../lib/api-config';
 
 export default function RecordArchivePage() {
   const [recording, setRecording] = useState(false);
@@ -71,7 +72,7 @@ export default function RecordArchivePage() {
 
     setProcessing(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/archive/submit`, {
+      const res = await fetch(`${API_BASE}/api/archive/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

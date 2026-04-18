@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../components/Navbar';
+import { API_BASE } from '../../lib/api-config';
 
 export default function HeritageArchive() {
   const [sites, setSites] = useState<any[]>([]);
@@ -10,8 +11,7 @@ export default function HeritageArchive() {
   const [filter, setFilter] = useState('All');
   const [selectedSite, setSelectedSite] = useState<any>(null);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-
+  
   useEffect(() => {
     async function fetchSites() {
       try {

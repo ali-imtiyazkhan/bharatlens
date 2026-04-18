@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Webcam from 'react-webcam';
 import { motion, AnimatePresence } from 'framer-motion';
+import { API_BASE } from '../../lib/api-config';
 
 interface ScanResult {
   identification?: string;
@@ -51,7 +52,7 @@ export default function ARCameraPage() {
     setScanning(true);
     setResult(null);
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    setResult(null);
 
     try {
       const res = await fetch(`${API_BASE}/api/explore/vision`, {

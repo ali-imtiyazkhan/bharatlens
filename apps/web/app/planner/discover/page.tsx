@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import AuthControls from "../../../components/AuthControls";
+import { API_BASE } from "../../../lib/api-config";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 const CATEGORY_FILTERS = [
   { label: "All", value: "" },

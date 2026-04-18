@@ -5,6 +5,7 @@ import Link from 'next/link';
 import AuthControls from '../../components/AuthControls';
 import Navbar from '../../components/Navbar';
 import { motion } from 'framer-motion';
+import { API_BASE } from '../../lib/api-config';
 
 export default function RewardsPage() {
   const [stats, setStats] = useState<any>(null);
@@ -14,7 +15,6 @@ export default function RewardsPage() {
 
   useEffect(() => {
     async function fetchData() {
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       // Get the current logged in user from storage
       const stored = localStorage.getItem('user');
       let currentUser: any = null;
