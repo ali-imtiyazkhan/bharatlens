@@ -10,9 +10,6 @@ const apiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(apiKey);
 const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-2.0-flash-lite', 'gemini-2.5-flash'];
 
-/**
- * Helper: Ask Gemini for structured JSON with model fallback and retry.
- */
 const askGemini = async (prompt: string): Promise<any> => {
   let lastError: any;
 
@@ -24,7 +21,6 @@ const askGemini = async (prompt: string): Promise<any> => {
       const response = result.response;
       const text = response.text();
 
-      // Strip markdown code fences if present
       const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       return JSON.parse(cleaned);
     } catch (err: any) {
@@ -43,8 +39,6 @@ const askGemini = async (prompt: string): Promise<any> => {
 
   throw lastError;
 };
-
-// ─── GENERATE ITINERARY ─────────────────────────────────────
 
 router.post('/generate', async (req, res) => {
   try {
@@ -79,7 +73,6 @@ Respond ONLY with valid JSON matching this exact structure (no markdown, no expl
 
     const plan: ItineraryPlan = await askGemini(prompt);
 
-    // Try to save to database, but don't fail the whole request if user doesn't exist
     let savedItinerary = null;
     try {
       savedItinerary = await prisma.itinerary.create({
@@ -112,8 +105,6 @@ Respond ONLY with valid JSON matching this exact structure (no markdown, no expl
   }
 });
 
-// ─── GET ITINERARY BY ID ────────────────────────────────────
-
 router.get('/itinerary/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -139,8 +130,6 @@ router.get('/itinerary/:id', async (req, res) => {
   }
 });
 
-// ─── GET ALL ITINERARIES FOR A USER ─────────────────────────
-
 router.get('/itineraries/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
@@ -158,7 +147,6 @@ router.get('/itineraries/:userId', async (req, res) => {
   }
 });
 
-// ─── DISCOVER DESTINATIONS ──────────────────────────────────
 
 router.post('/discover', async (req, res) => {
   try {
@@ -204,8 +192,6 @@ Respond ONLY with valid JSON matching this exact structure (no markdown, no expl
   }
 });
 
-// ─── DESTINATION INSIGHTS (SAFETY + NEWS) ───────────────────
-
 router.post('/insights', async (req, res) => {
   try {
     const data: DestinationInsightsRequest = req.body;
@@ -239,7 +225,6 @@ Respond ONLY with valid JSON matching this exact structure (no markdown, no expl
   }
 });
 
-// ─── TEST: List available models ────────────────────────────
 
 router.get('/test/models', async (_req, res) => {
   try {
@@ -257,8 +242,6 @@ router.get('/test/models', async (_req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
-
-// ─── TEST: Simple AI ping ───────────────────────────────────
 
 router.get('/test/ping', async (_req, res) => {
   try {
