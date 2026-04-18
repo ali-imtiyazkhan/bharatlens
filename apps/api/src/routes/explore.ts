@@ -4,7 +4,15 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const router: Router = Router();
 const apiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(apiKey);
-const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro'];
+const FALLBACK_MODELS = [
+  'gemini-flash-latest', 
+  'gemini-1.5-flash', 
+  'gemini-1.5-flash-8b', 
+  'gemini-1.5-pro-latest', 
+  'gemini-1.5-pro', 
+  'gemini-pro',
+  'gemini-1.0-pro'
+];
 
 const FALLBACK_SITES = {
   sites: [
