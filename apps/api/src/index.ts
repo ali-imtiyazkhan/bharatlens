@@ -1,7 +1,9 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import plannerRoutes from './routes/planner';
+import authRoutes from './routes/auth';
 
 const app = express();
 
@@ -15,6 +17,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.use('/api/auth', authRoutes);
 app.use('/api/planner', plannerRoutes);
 
 app.listen(PORT, () => {

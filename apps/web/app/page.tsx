@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Globe from "../components/Globe";
+import AuthControls from "../components/AuthControls";
 
 export default function LandingPage() {
   const [time, setTime] = useState("");
@@ -40,7 +41,7 @@ export default function LandingPage() {
         </div>
         <div className="nav-controls">
           <button className="lang-select">EN / HI</button>
-          <Link href="/login" className="btn-login">Sign In</Link>
+          <AuthControls />
         </div>
       </nav>
 
