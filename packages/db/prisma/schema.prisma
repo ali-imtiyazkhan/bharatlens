@@ -46,6 +46,8 @@ model User {
   messagesReceived    Message[] @relation("MessagesReceived")
   communities         CommunityMember[]
   joinRequests        JoinRequest[]
+  archiveStories      ArchiveStory[]
+  communityMessages   CommunityMessage[]
 }
 
 model Heritage {
@@ -203,6 +205,7 @@ model Community {
 
   members       CommunityMember[]
   requests      JoinRequest[]
+  messages      CommunityMessage[]
 }
 
 model CommunityMember {
@@ -223,6 +226,35 @@ model JoinRequest {
   communityId   String
   status        String    @default("PENDING") // PENDING, APPROVED, REJECTED
   message       String?
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id])
+  community     Community @relation(fields: [communityId], references: [id])
+}
+
+model ArchiveStory {
+  id            String    @id @default(cuid())
+  title         String
+  transcript    String
+  authorName    String
+  authorAge     Int
+  siteName      String
+  era           String
+  category      String
+  language      String
+  userId        String    // The Story Aide
+  pointsEarned  Int       @default(70)
+  audioUrl      String?
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id])
+}
+
+model CommunityMessage {
+  id            String    @id @default(cuid())
+  text          String
+  userId        String
+  communityId   String
   createdAt     DateTime  @default(now())
 
   user          User      @relation(fields: [userId], references: [id])

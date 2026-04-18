@@ -1,73 +1,105 @@
 import { Router } from 'express';
+import prisma from '../lib/prisma';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const router: Router = Router();
 const apiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(apiKey);
-const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-2.0-flash-lite', 'gemini-2.5-flash'];
 
-const askGemini = async (prompt: string): Promise<any> => {
-  let lastError: any;
-  for (const modelName of FALLBACK_MODELS) {
-    try {
-      console.log(`Trying model: ${modelName}`);
-      const currentModel = genAI.getGenerativeModel({ model: modelName });
-      const result = await currentModel.generateContent(prompt);
-      const text = result.response.text();
-      const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      return JSON.parse(cleaned);
-    } catch (err: any) {
-      lastError = err;
-      if (err?.status === 429 || err?.status === 503) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        continue;
-      }
-      continue;
-    }
+router.get('/list', async (req, res) => {
+  try {
+    const stories = await prisma.archiveStory.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { name: true } } }
+    });
+    return res.json(stories);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch archive' });
   }
-  throw lastError;
-};
+});
 
 router.post('/process', async (req, res) => {
+  const { transcript, language, location } = req.body;
+  
+  if (!transcript) return res.status(400).json({ error: 'Missing transcript' });
+
   try {
-    const { transcript, language, location } = req.body;
-
-    if (!transcript) {
-      return res.status(400).json({ error: 'Missing transcript' });
-    }
-
+    const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+    
     const prompt = `
-You are an expert oral historian and linguist. You have been given a raw transcript spoken by an elder, likely in a local Indian dialect.
-Language provided bounds: ${language || 'Unknown (detect)'}.
-GPS/Location Context: ${location || 'Unknown'}.
+      You are an AI heritage researcher. I have a raw oral history transcript in ${language || 'a local Indian language'} recorded at ${location || 'a heritage site'}.
+      
+      RAW TRANSCRIPT: "${transcript}"
+      
+      Perform the following:
+      1. Translate it to clear, evocative English.
+      2. Identify the likely historic ERA being discussed (e.g., 1950s, Colonial, Post-Independence).
+      3. Identify the CATEGORY (e.g., Eyewitness account, Folklore, Craft Knowledge).
+      4. Create a compelling TITLE (max 6 words).
+      
+      Respond ONLY with valid JSON:
+      {
+        "translation": "English text here...",
+        "era": "Era name",
+        "category": "Category name",
+        "title": "Story Title",
+        "language": "${language || 'Unknown'}"
+      }
+    `;
 
-Please process this transcript:
-1. Translate it clearly into English.
-2. Identify the core "era" they are speaking about (e.g., "1940s", "Pre-Independence", "Contemporary").
-3. Determine the type of story ("Folklore", "Eyewitness", "Craft Knowledge", "Religious").
-4. Flag if it makes verifiable historical claims that need human-review (boolean).
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+    const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    const data = JSON.parse(cleaned);
 
-Raw Transcript: "${transcript}"
-
-Return ONLY a JSON object strictly matching this schema:
-{
-  "translation": "English translation here",
-  "era": "The identified era",
-  "category": "The primary category",
-  "keywords": ["tag1", "tag2"],
-  "needsVerification": true/false
-}
-`;
-
-    const data = await askGemini(prompt);
-    
-    // Simulate latency for the complete Whisper + Pipeline experience
-    await new Promise(r => setTimeout(r, 1500));
-    
-    return res.status(200).json(data);
+    return res.json(data);
   } catch (error) {
-    console.error('Error in /archive/process:', error);
-    return res.status(500).json({ error: 'Failed to process audio transcript with AI' });
+    console.error('AI Processing Error:', error);
+    // Fallback if AI fails
+    return res.json({
+      translation: transcript,
+      era: "Modern Era",
+      category: "Oral History",
+      title: "Untold Story of " + (location || "Heritage"),
+      language: language || "Unknown"
+    });
+  }
+});
+
+// POST /api/archive/submit
+router.post('/submit', async (req, res) => {
+  const { aideId, authorName, authorAge, siteName, resultData } = req.body;
+
+  if (!aideId || !authorName || !resultData) {
+    return res.status(400).json({ error: 'Missing submission data' });
+  }
+
+  try {
+    // 1. Create the Archive Story
+    const story = await prisma.archiveStory.create({
+      data: {
+        title: resultData.title,
+        transcript: resultData.translation,
+        authorName,
+        authorAge: parseInt(authorAge),
+        siteName: siteName || resultData.location || "Unknown Site",
+        era: resultData.era,
+        category: resultData.category,
+        language: resultData.language,
+        userId: aideId,
+        pointsEarned: 70
+      }
+    });
+
+    await prisma.user.update({
+      where: { id: aideId },
+      data: { tokens: { increment: 70 } }
+    });
+
+    return res.status(201).json({ success: true, story });
+  } catch (error) {
+    console.error('Submission Error:', error);
+    return res.status(500).json({ error: 'Failed to archive story' });
   }
 });
 

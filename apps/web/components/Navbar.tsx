@@ -20,7 +20,11 @@ export default function Navbar() {
 
   const dropdownLinks = [
     { name: 'Virtual Tours', path: '/virtual-tours' },
+    { name: 'Heritage Voices', path: '/heritage' },
+    { name: 'Living Archive', path: '/archive' },
     { name: 'Community', path: '/discover' },
+    { name: 'Communities Hub', path: '/communities' },
+    { name: 'Chat', path: '/chat' },
     { name: 'Rewards', path: '/rewards' },
     { name: 'Insider Journey', path: '/journey' },
     { name: 'Voice Translator', path: '/translator' },
