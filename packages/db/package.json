@@ -12,19 +12,19 @@
   },
   "scripts": {
     "build": "tsc",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push"
+    "db:generate": "pnpm exec prisma generate",
+    "db:push": "pnpm exec prisma db push"
   },
   "dependencies": {
     "@prisma/client": "^5.12.0",
     "bcrypt": "^6.0.0",
+    "prisma": "^5.12.0",
     "ts-node": "^10.9.2",
     "typescript": "latest"
   },
   "devDependencies": {
     "@bharatlens/config": "workspace:*",
-    "@types/bcrypt": "^6.0.0",
-    "prisma": "^5.12.0"
+    "@types/bcrypt": "^6.0.0"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
