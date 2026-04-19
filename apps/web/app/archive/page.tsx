@@ -11,17 +11,26 @@ export default function HeritageArchive() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
   const [selectedSite, setSelectedSite] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isAudioOpen, setIsAudioOpen] = useState(false);
 
-  
   useEffect(() => {
     async function fetchSites() {
       try {
         const res = await fetch(`${API_BASE}/api/heritage/all`);
         const data = await res.json();
-        setSites(data);
+        
+        if (Array.isArray(data)) {
+          setSites(data);
+          setError(null);
+        } else if (data.error) {
+          setError(data.error);
+        } else {
+          setError('Unexpected data format from server');
+        }
       } catch (e) {
         console.error('Failed to fetch archive:', e);
+        setError('Connection failed. Please ensure the backend is running.');
       } finally {
         setLoading(false);
       }
@@ -29,8 +38,20 @@ export default function HeritageArchive() {
     fetchSites();
   }, []);
 
-  const categories = ['All', ...new Set(sites.map(s => s.category))];
+  const categories = ['All', ...new Set(sites.map(s => s.category).filter(Boolean))];
   const filteredSites = filter === 'All' ? sites : sites.filter(s => s.category === filter);
+
+  if (error) {
+    return (
+      <div className="page" style={{ minHeight: '100vh', background: '#050505', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', textAlign: 'center' }}>
+        <div>
+          <h2 style={{ color: '#ef4444', marginBottom: 16 }}>Archive Unavailable</h2>
+          <p style={{ color: 'rgba(255,255,255,0.4)', marginBottom: 24 }}>{error}</p>
+          <button onClick={() => window.location.reload()} style={{ padding: '12px 24px', borderRadius: 12, background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}>Retry Access</button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -74,35 +95,43 @@ export default function HeritageArchive() {
           </div>
         </header>
 
-        <div style={{ columns: '3 300px', columnGap: 24 }}>
-          {filteredSites.map((site, idx) => (
-            <motion.div 
-              key={site.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: idx * 0.05 }}
-              onClick={() => setSelectedSite(site)}
-              style={{ 
-                breakInside: 'avoid', marginBottom: 24, position: 'relative', borderRadius: 20, 
-                overflow: 'hidden', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)',
-                background: '#111'
-              }}
-              whileHover={{ scale: 1.02 }}
-            >
-              <img 
-                src={site.images?.[0] || 'https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=1200'} 
-                style={{ width: '100%', display: 'block', height: 'auto', minHeight: 200, objectFit: 'cover' }}
-                alt={site.name}
-              />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)' }} />
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 24 }}>
-                <div style={{ fontSize: 9, fontWeight: 800, color: '#c9a84c', textTransform: 'uppercase', marginBottom: 4 }}>{site.category}</div>
-                <h3 style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>{site.name}</h3>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>{site.state}</div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        {filteredSites.length === 0 ? (
+          <div style={{ padding: '100px 0', textAlign: 'center', width: '100%' }}>
+            <div style={{ fontSize: 48, marginBottom: 24, opacity: 0.3 }}>🏛️</div>
+            <h3 style={{ fontSize: 24, fontWeight: 800, color: 'rgba(255,255,255,0.2)' }}>No sites discovered in this category</h3>
+            <button onClick={() => setFilter('All')} style={{ background: 'none', border: 'none', color: '#c9a84c', marginTop: 12, fontWeight: 800, cursor: 'pointer' }}>View all entries</button>
+          </div>
+        ) : (
+          <div style={{ columns: '3 300px', columnGap: 24 }}>
+            {filteredSites.map((site, idx) => (
+              <motion.div 
+                key={site.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.05 }}
+                onClick={() => setSelectedSite(site)}
+                style={{ 
+                  breakInside: 'avoid', marginBottom: 24, position: 'relative', borderRadius: 20, 
+                  overflow: 'hidden', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)',
+                  background: '#111'
+                }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <img 
+                  src={site.images?.[0] || 'https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=1200'} 
+                  style={{ width: '100%', display: 'block', height: 'auto', minHeight: 200, objectFit: 'cover' }}
+                  alt={site.name}
+                />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)' }} />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 24 }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: '#c9a84c', textTransform: 'uppercase', marginBottom: 4 }}>{site.category}</div>
+                  <h3 style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>{site.name}</h3>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>{site.state}</div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </main>
 
       <AnimatePresence>

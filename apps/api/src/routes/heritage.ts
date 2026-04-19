@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import prisma from '../lib/prisma';
 
 const router: Router = Router();
 const apiKey = process.env.GEMINI_API_KEY || '';
@@ -114,6 +115,5 @@ router.get('/all', async (req, res) => {
   }
 });
 
-import prisma from '../lib/prisma';
 
 export default router;
