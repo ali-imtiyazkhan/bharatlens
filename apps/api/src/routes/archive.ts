@@ -1,10 +1,8 @@
 import { Router } from 'express';
 import prisma from '../lib/prisma';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { askGemini } from '../lib/gemini';
 
 const router: Router = Router();
-const apiKey = process.env.GEMINI_API_KEY || '';
-const genAI = new GoogleGenerativeAI(apiKey);
 
 router.get('/list', async (req, res) => {
   try {
@@ -24,8 +22,6 @@ router.post('/process', async (req, res) => {
   if (!transcript) return res.status(400).json({ error: 'Missing transcript' });
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
-    
     const prompt = `
       You are an AI heritage researcher. I have a raw oral history transcript in ${language || 'a local Indian language'} recorded at ${location || 'a heritage site'}.
       
@@ -47,10 +43,7 @@ router.post('/process', async (req, res) => {
       }
     `;
 
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
-    const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    const data = JSON.parse(cleaned);
+    const data = await askGemini(prompt);
 
     return res.json(data);
   } catch (error) {
