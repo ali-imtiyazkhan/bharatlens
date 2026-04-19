@@ -3,7 +3,20 @@ import prisma from '../lib/prisma';
 
 const router: Router = Router();
 
-// GET /api/profile/:username
+router.get('/me/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id }
+    });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to fetch user' });
+  }
+});
+
+
 router.get('/:username', async (req, res) => {
   const { username } = req.params;
 

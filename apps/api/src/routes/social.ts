@@ -98,6 +98,56 @@ router.post('/star/:username', async (req, res) => {
   }
 });
 
+router.get('/feed', async (req, res) => {
+  try {
+    const [visits, stories] = await Promise.all([
+      prisma.visit.findMany({
+        where: { isPublic: true },
+        take: 12,
+        orderBy: { visitedAt: 'desc' },
+        include: { 
+          user: { select: { username: true, displayName: true, avatarUrl: true } },
+          heritage: { select: { name: true, city: true } }
+        }
+      }),
+      prisma.archiveStory.findMany({
+        take: 12,
+        orderBy: { createdAt: 'desc' },
+        include: { 
+          user: { select: { username: true, displayName: true, avatarUrl: true } }
+        }
+      })
+    ]);
+
+    // Merge and sort by date
+    const feed = [
+      ...visits.map(v => ({
+        id: v.id,
+        type: 'visit',
+        user: v.user,
+        content: v.caption || `Checked in at ${v.heritage.name}`,
+        location: `${v.heritage.name}, ${v.heritage.city}`,
+        date: v.visitedAt,
+        photos: v.photos
+      })),
+      ...stories.map(s => ({
+        id: s.id,
+        type: 'story',
+        user: s.user,
+        content: `Archived an oral history: "${s.title}"`,
+        location: s.siteName,
+        date: s.createdAt,
+        metadata: { era: s.era, category: s.category }
+      }))
+    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    return res.status(200).json(feed);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to fetch feed' });
+  }
+});
+
 // GET /api/social/discover
 router.get('/discover', async (req, res) => {
   try {

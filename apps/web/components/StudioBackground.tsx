@@ -44,6 +44,13 @@ export default function StudioBackground() {
           0%, 100% { transform: translate(0, 0) scale(1); }
           50%       { transform: translate(18px, -18px) scale(1.04); }
         }
+
+        @media (max-width: 768px) {
+          .orb1 { width: 200px; height: 200px; top: 10%; left: -10%; }
+          .orb2 { width: 150px; height: 150px; top: 5%; right: -10%; }
+          .orb3 { width: 120px; height: 120px; bottom: 10%; left: 5%; }
+          .orb { filter: blur(60px); }
+        }
       `}} />
     </>
   );
