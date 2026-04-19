@@ -3,7 +3,6 @@ import prisma from '../lib/prisma';
 
 const router: Router = Router();
 
-// GET /api/rewards/stats/:username
 router.get('/stats/:username', async (req, res) => {
   const { username } = req.params;
   try {
@@ -19,13 +18,9 @@ router.get('/stats/:username', async (req, res) => {
 
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    // Calculate dynamic XP
-    // 100 XP per visit, 50 XP per badge
     const visitXP = user._count.visits * 100;
     const badgeXP = user.badges.length * 50;
-    const totalXP = (user as any).xp || (visitXP + badgeXP); // Fallback to calculation if field is missing
-
-    // Mock tokens if not in schema yet
+    const totalXP = (user as any).xp || (visitXP + badgeXP); 
     const tokens = Math.floor(totalXP / 10);
 
     return res.status(200).json({
@@ -40,10 +35,8 @@ router.get('/stats/:username', async (req, res) => {
   }
 });
 
-// GET /api/rewards/leaderboard
 router.get('/leaderboard', async (req, res) => {
   try {
-    // In a real app, we'd query by XP. For now, we'll return a top list based on visits.
     const topUsers = await prisma.user.findMany({
       take: 10,
       include: {
