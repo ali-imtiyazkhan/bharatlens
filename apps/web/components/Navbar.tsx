@@ -5,11 +5,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import AuthControls from './AuthControls';
+import { useUser } from '../hooks/use-user';
+import { TRANSLATIONS, Language, getTranslation } from '../lib/i18n';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { user } = useUser();
+  const [lang, setLang] = useState<Language>('en');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const t = getTranslation(lang);
   const isActive = (path: string) => pathname === path;
 
   const mainLinks = [
@@ -147,6 +152,9 @@ export default function Navbar() {
                       color: isActive(link.path) ? '#c9a84c' : 'rgba(240, 236, 228, 0.7)',
                       letterSpacing: '0.05em'
                     }}>
+                      {/* 
+                        Localization and More links
+                      */}
                       {link.name}
                     </span>
                   </Link>
@@ -157,8 +165,46 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Auth Controls */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      {/* Auth, HP & Lang */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+        {/* Language Selector */}
+        <select 
+          value={lang} 
+          onChange={(e) => setLang(e.target.value as Language)}
+          style={{
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 8,
+            color: '#c9a84c',
+            fontSize: 10,
+            fontWeight: 800,
+            padding: '4px 8px',
+            outline: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          <option value="en">EN</option>
+          <option value="hi">HI</option>
+        </select>
+
+        {user && (
+          <motion.div 
+            key={user.tokens}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            style={{ 
+              display: 'flex', alignItems: 'center', gap: 8, 
+              background: 'rgba(201, 168, 76, 0.1)', 
+              padding: '6px 14px', borderRadius: 20,
+              border: '1px solid rgba(201, 168, 76, 0.3)'
+            }}
+          >
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#c9a84c', boxShadow: '0 0 10px #c9a84c' }} />
+            <span style={{ fontSize: 13, fontWeight: 900, color: '#c9a84c', fontFamily: "'Outfit', sans-serif" }}>
+              {user.tokens} <span style={{ fontSize: 10, opacity: 0.6 }}>{t.hp}</span>
+            </span>
+          </motion.div>
+        )}
         <AuthControls />
       </div>
 
