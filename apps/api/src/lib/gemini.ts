@@ -3,7 +3,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const apiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(apiKey);
 
-// Standard, stable model identifiers for the Google AI Studio SDK
 export const FALLBACK_MODELS = [
   'gemini-flash-latest',
   'gemini-1.5-flash',
@@ -20,13 +19,12 @@ export const askGemini = async (prompt: string, context = 'General'): Promise<an
       
       const currentModel = genAI.getGenerativeModel(
         { model: modelName },
-        { timeout: 15000 } // 15 second timeout to prevent proxy hanging
+        { timeout: 15000 }
       );
       
       const result = await currentModel.generateContent(prompt);
       const text = result.response.text();
       
-      // Clean potential markdown blocks
       const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       
       try {
@@ -39,14 +37,12 @@ export const askGemini = async (prompt: string, context = 'General'): Promise<an
       lastError = err;
       console.warn(`[GeminiUtil:${context}] Model ${modelName} failed:`, err?.message || 'Unknown error');
       
-      // Status 429: Rate Limit, Status 503: High Demand
       if (err?.status === 429 || err?.status === 503) {
         console.log(`[GeminiUtil:${context}] Service busy/limited. Waiting 1s...`);
         await new Promise(resolve => setTimeout(resolve, 1000));
         continue;
       }
       
-      // If 404, the model ID might be wrong, continue immediately to next
       if (err?.status === 404) {
         continue;
       }

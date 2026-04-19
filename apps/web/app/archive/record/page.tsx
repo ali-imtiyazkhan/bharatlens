@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { API_BASE } from '../../../lib/api-config';
+import AudioPlayer from '../../../components/AudioPlayer';
 
 export default function RecordArchivePage() {
   const [recording, setRecording] = useState(false);
@@ -13,16 +14,48 @@ export default function RecordArchivePage() {
   const [result, setResult] = useState<any>(null);
   const [authorInfo, setAuthorInfo] = useState({ name: '', age: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [isAudioOpen, setIsAudioOpen] = useState(false);
+  const [liveTranscript, setLiveTranscript] = useState('');
   
   const timerRef = useRef<any>(null);
+  const recognitionRef = useRef<any>(null);
 
-  // Initialize MediaRecorder if access allowed
+  // Initialize Speech Recognition and MediaRecorder
   useEffect(() => {
+    // MediaRecorder
     navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
       const recorder = new MediaRecorder(stream);
       setMediaRecorder(recorder);
     }).catch(console.error);
-    return () => clearInterval(timerRef.current);
+
+    // Speech Recognition
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const rec = new SpeechRecognition();
+      rec.continuous = true;
+      rec.interimResults = true;
+      rec.lang = 'en-IN'; // Default to Indian English, Gemini handles other langs in processing
+
+      rec.onresult = (event: any) => {
+        let interim = '';
+        let final = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            final += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
+          }
+        }
+        setLiveTranscript(prev => (prev + ' ' + final).trim());
+      };
+
+      recognitionRef.current = rec;
+    }
+
+    return () => {
+      clearInterval(timerRef.current);
+      if (recognitionRef.current) recognitionRef.current.stop();
+    };
   }, []);
 
   const handleStart = () => {
@@ -31,6 +64,14 @@ export default function RecordArchivePage() {
     setRecording(true);
     setResult(null);
     setTime(0);
+    setLiveTranscript('');
+    
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.start();
+      } catch (e) { console.error('Recognition already started'); }
+    }
+
     timerRef.current = setInterval(() => setTime(t => t + 1), 1000);
   };
 
@@ -40,21 +81,26 @@ export default function RecordArchivePage() {
     setRecording(false);
     clearInterval(timerRef.current);
     
-    // Simulate AI upload payload by manually passing a mock transcription
-    // In reality this would be: upload audio blob to backend -> whisper text -> process tags
-    processMockTranscriptToAI();
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    
+    processRealTranscriptToAI();
   };
 
-  const processMockTranscriptToAI = async () => {
+  const processRealTranscriptToAI = async () => {
     setProcessing(true);
     try {
+      // Use the actual transcript from the live recognition
+      const textToProcess = liveTranscript || "Default transcript fallback";
+      
       const res = await fetch('/api/archive/process', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          transcript: "Humare zamane mein, kuye ka paani bilkul meetha hota tha. 1950s ki baat hai, sarpanch ne ek chabutra banwaya... waha gaon ki saari panchayat hoti thi.",
-          language: "Hindi",
-          location: "Village Square Well"
+          transcript: textToProcess,
+          language: "Auto-detect",
+          location: "Current Heritage Site"
         })
       });
       const data = await res.json();
@@ -137,13 +183,30 @@ export default function RecordArchivePage() {
                 </button>
               </div>
 
-              <div style={{ fontSize: 48, fontWeight: 300, fontFamily: 'monospace', color: recording ? '#ef4444' : '#fff' }}>
+              <div style={{ fontSize: 48, fontWeight: 300, fontFamily: 'monospace', color: recording ? '#ef4444' : '#fff', marginBottom: 32 }}>
                 00:{time < 10 ? `0${time}` : time}
               </div>
 
-              <p style={{ marginTop: 24, fontSize: 14, color: 'rgba(255,255,255,0.4)', maxWidth: 300, lineHeight: 1.5 }}>
-                Hold the phone near the elder. Let them speak comfortably in their native language.
-              </p>
+              <AnimatePresence>
+                {recording && liveTranscript && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{ background: 'rgba(255,255,255,0.05)', padding: '16px 24px', borderRadius: 16, border: '1px solid rgba(255,255,255,0.1)', maxWidth: 400, margin: '0 auto' }}
+                  >
+                    <div style={{ fontSize: 9, color: '#ef4444', fontWeight: 800, textTransform: 'uppercase', marginBottom: 8, letterSpacing: '0.1em' }}>Live Caption</div>
+                    <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', fontStyle: 'italic', lineHeight: 1.5 }}>
+                      "{liveTranscript}..."
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {!recording && (
+                <p style={{ marginTop: 24, fontSize: 14, color: 'rgba(255,255,255,0.4)', maxWidth: 300, lineHeight: 1.5, margin: '24px auto 0 auto' }}>
+                  Hold the phone near the elder. Let them speak comfortably in their native language.
+                </p>
+              )}
             </motion.div>
           )}
 
@@ -187,9 +250,15 @@ export default function RecordArchivePage() {
                   </div>
                 </div>
 
-                <div style={{ background: 'rgba(0,0,0,0.4)', padding: 16, borderRadius: 12, marginBottom: 24 }}>
+                <div style={{ background: 'rgba(0,0,0,0.4)', padding: 16, borderRadius: 12, marginBottom: 24, position: 'relative' }}>
                   <div style={{ fontSize: 11, color: 'rgba(59,130,246,0.6)', fontWeight: 800, textTransform: 'uppercase', marginBottom: 8 }}>AI Summary: "{result.title}"</div>
-                  <p style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.8)' }}>{result.translation}</p>
+                  <p style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.8)', marginBottom: 12 }}>{result.translation}</p>
+                  <button 
+                    onClick={() => setIsAudioOpen(true)}
+                    style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+                  >
+                    🔊 Listen to Narration
+                  </button>
                 </div>
 
                 <button 
@@ -217,6 +286,13 @@ export default function RecordArchivePage() {
         </AnimatePresence>
 
       </div>
+
+      <AudioPlayer 
+        isOpen={isAudioOpen}
+        onClose={() => setIsAudioOpen(false)}
+        siteName={result?.location || 'Heritage Site'}
+        category="Oral History"
+      />
 
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes ping {

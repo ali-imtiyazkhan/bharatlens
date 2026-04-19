@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import { API_BASE } from '../../lib/api-config';
+import AudioPlayer from '../../components/AudioPlayer';
 
 export default function HeritageArchive() {
   const [sites, setSites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
   const [selectedSite, setSelectedSite] = useState<any>(null);
+  const [isAudioOpen, setIsAudioOpen] = useState(false);
 
   
   useEffect(() => {
@@ -142,7 +144,12 @@ export default function HeritageArchive() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <button style={{ padding: '16px', borderRadius: 12, background: '#c9a84c', color: '#000', border: 'none', fontWeight: 800, cursor: 'pointer' }}>View 3D Model</button>
-                  <button style={{ padding: '16px', borderRadius: 12, background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontWeight: 800, cursor: 'pointer' }}>Download Assets</button>
+                  <button 
+                    onClick={() => setIsAudioOpen(true)}
+                    style={{ padding: '16px', borderRadius: 12, background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontWeight: 800, cursor: 'pointer' }}
+                  >
+                    🔊 Listen to Narration
+                  </button>
                 </div>
               </div>
 
@@ -156,6 +163,13 @@ export default function HeritageArchive() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <AudioPlayer 
+        isOpen={isAudioOpen}
+        onClose={() => setIsAudioOpen(false)}
+        siteName={selectedSite?.name || 'Heritage Site'}
+        category={selectedSite?.category}
+      />
     </div>
   );
 }

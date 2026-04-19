@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { speechManager, VoicePersona } from '../lib/speech-util';
 
 interface AudioPlayerProps {
   isOpen: boolean;
@@ -14,11 +15,8 @@ export default function AudioPlayer({ isOpen, onClose, siteName, category }: Aud
   const [loading, setLoading] = useState(false);
   const [script, setScript] = useState<string>('');
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [narrator, setNarrator] = useState<string>('Academic Historian');
+  const [persona, setPersona] = useState<VoicePersona>('modern');
   
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-
   useEffect(() => {
     if (isOpen) {
       fetchNarration();
@@ -38,7 +36,6 @@ export default function AudioPlayer({ isOpen, onClose, siteName, category }: Aud
       const data = await res.json();
       if (data.script) {
         setScript(data.script);
-        setupSynthesis(data.script);
       }
     } catch (e) {
       console.error(e);
@@ -47,55 +44,30 @@ export default function AudioPlayer({ isOpen, onClose, siteName, category }: Aud
     setLoading(false);
   };
 
-  const setupSynthesis = (text: string) => {
-    if (!('speechSynthesis' in window)) return;
-    
-    // Cleanup old
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.9;
-    utterance.pitch = 0.95;
-    
-    // Find a good voice (preferably a warm male or female voice)
-    const voices = window.speechSynthesis.getVoices();
-    const premiumVoice = voices.find(v => v.name.includes('Google') || v.name.includes('Premium') || v.lang.startsWith('en-IN')) || voices[0];
-    if (premiumVoice) utterance.voice = premiumVoice;
-
-    utterance.onboundary = (event) => {
-       const charIndex = event.charIndex;
-       setProgress((charIndex / text.length) * 100);
-    };
-
-    utterance.onend = () => {
-      setIsPlaying(false);
-      setProgress(100);
-    };
-
-    utteranceRef.current = utterance;
-  };
-
   const togglePlay = () => {
-    if (!utteranceRef.current) return;
+    if (!script) return;
     
     if (isPlaying) {
-      window.speechSynthesis.pause();
+      speechManager?.stop();
       setIsPlaying(false);
     } else {
-      if (window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
-      } else {
-        window.speechSynthesis.speak(utteranceRef.current);
-      }
+      speechManager?.speak(script, persona, () => {
+        setIsPlaying(false);
+      });
       setIsPlaying(true);
     }
   };
 
   const stopAudio = () => {
-    window.speechSynthesis.cancel();
+    speechManager?.stop();
     setIsPlaying(false);
-    setProgress(0);
   };
+
+  const personas: { id: VoicePersona; label: string; icon: string }[] = [
+    { id: 'modern', label: 'Modern Guide', icon: '💁‍♂️' },
+    { id: 'historic', label: 'Wise Historian', icon: '📜' },
+    { id: 'mystical', label: 'Mystical Sage', icon: '✨' },
+  ];
 
   return (
     <AnimatePresence>
@@ -111,71 +83,111 @@ export default function AudioPlayer({ isOpen, onClose, siteName, category }: Aud
             transform: 'translateX(-50%)',
             width: '90vw',
             maxWidth: 500,
-            background: 'rgba(10, 10, 10, 0.85)',
-            backdropFilter: 'blur(30px)',
+            background: 'rgba(10, 10, 10, 0.9)',
+            backdropFilter: 'blur(40px)',
             border: '1px solid rgba(201, 168, 76, 0.3)',
-            borderRadius: 24,
-            padding: 24,
+            borderRadius: 32,
+            padding: 32,
             zIndex: 1000,
-            boxShadow: '0 20px 50px rgba(0,0,0,0.5), 0 0 20px rgba(201,168,76,0.1)',
+            boxShadow: '0 30px 60px rgba(0,0,0,0.8), 0 0 40px rgba(201,168,76,0.1)',
             display: 'flex',
             flexDirection: 'column',
-            gap: 16
+            gap: 24
           }}
         >
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-               <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(201,168,76,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                 <div style={{ width: 12, height: 12, borderRadius: 2, background: '#c9a84c', animation: isPlaying ? 'pulse 1s infinite' : 'none' }} />
+            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+               <div style={{ width: 48, height: 48, borderRadius: 16, background: 'rgba(201,168,76,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                 {isPlaying && (
+                   <motion.div 
+                     animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+                     transition={{ repeat: Infinity, duration: 2 }}
+                     style={{ position: 'absolute', inset: 0, border: '2px solid #c9a84c', borderRadius: 16 }} 
+                   />
+                 )}
+                 <div style={{ fontSize: 24 }}>{personas.find(p => p.id === persona)?.icon}</div>
                </div>
                <div>
-                  <div style={{ fontSize: 10, color: '#c9a84c', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Studio Narration</div>
-                  <div style={{ fontSize: 14, color: '#f0ece4', fontWeight: 700 }}>{siteName}</div>
+                  <div style={{ fontSize: 10, color: '#c9a84c', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em' }}>Cinema Narration</div>
+                  <div style={{ fontSize: 18, color: '#fff', fontWeight: 800, fontFamily: "'Outfit', sans-serif" }}>{siteName}</div>
                </div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#666', fontSize: 20, cursor: 'pointer' }}>×</button>
+            <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', width: 32, height: 32, borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
           </div>
 
-          {/* Body */}
-          <div style={{ background: 'rgba(255,255,255,0.02)', padding: 16, borderRadius: 12, maxHeight: 120, overflowY: 'auto' }}>
+          {/* Persona Selector */}
+          <div style={{ display: 'flex', gap: 8, background: 'rgba(0,0,0,0.3)', padding: 4, borderRadius: 16 }}>
+            {personas.map(p => (
+              <button
+                key={p.id}
+                onClick={() => { setPersona(p.id); stopAudio(); }}
+                style={{
+                  flex: 1, padding: '10px', borderRadius: 12, border: 'none', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                  background: persona === p.id ? '#c9a84c' : 'transparent',
+                  color: persona === p.id ? '#000' : 'rgba(255,255,255,0.4)',
+                  transition: 'all 0.3s'
+                }}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Script Display */}
+          <div style={{ background: 'rgba(255,255,255,0.02)', padding: 20, borderRadius: 20, maxHeight: 150, overflowY: 'auto', border: '1px solid rgba(255,255,255,0.05)' }}>
             {loading ? (
-              <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>Generating historical script...</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>
+                <div style={{ width: 4, height: 4, background: '#c9a84c', borderRadius: '50%', animation: 'bounce 1s infinite' }} />
+                Channeling historical records...
+              </div>
             ) : (
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, lineHeight: 1.6, fontStyle: 'italic' }}>
+              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, lineHeight: 1.7, fontStyle: 'italic', margin: 0 }}>
                 "{script}"
               </p>
             )}
           </div>
 
-          {/* Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          {/* Player Main Control */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             <button 
               onClick={togglePlay}
-              disabled={loading}
+              disabled={loading || !script}
               style={{
-                width: 48, height: 48, borderRadius: '50%', background: '#c9a84c', border: 'none', 
-                color: '#000', fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                width: 64, height: 64, borderRadius: '50%', background: '#c9a84c', border: 'none', 
+                color: '#000', fontSize: 24, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: isPlaying ? '0 0 30px rgba(201,168,76,0.4)' : 'none',
+                transition: 'all 0.3s'
               }}
             >
               {isPlaying ? '⏸' : '▶'}
             </button>
-            <div style={{ flex: 1, position: 'relative' }}>
-              <div style={{ height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 2, overflow: 'hidden' }}>
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  style={{ height: '100%', background: '#c9a84c' }} 
-                />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
-                <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', fontWeight: 800 }}>AI NARRATOR: GENIUS</span>
-                <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', fontWeight: 800 }}>LIVE SYNC</span>
-              </div>
+            
+            <div style={{ flex: 1 }}>
+               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 20, marginBottom: 8 }}>
+                  {[1,2,3,4,5,6,7,8,9,10,11,12].map(i => (
+                    <motion.div
+                      key={i}
+                      animate={{ height: isPlaying ? [10, 20, 10] : 4 }}
+                      transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.1 }}
+                      style={{ width: 3, background: isPlaying ? '#c9a84c' : 'rgba(255,255,255,0.1)', borderRadius: 1.5 }}
+                    />
+                  ))}
+               </div>
+               <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontWeight: 800, letterSpacing: '0.1em' }}>
+                 {isPlaying ? 'NARRATING LIVE' : 'READY TO NARRATE'}
+               </div>
             </div>
           </div>
         </motion.div>
       )}
+      
+      <style>{`
+        @keyframes bounce {
+          0%, 100% { transform: scale(1); opacity: 0.5; }
+          50% { transform: scale(2); opacity: 1; }
+        }
+      `}</style>
     </AnimatePresence>
   );
 }
