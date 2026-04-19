@@ -1,7 +1,6 @@
-'use client';
+ 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { getSocket } from '../../lib/socket';
 import Navbar from '../../components/Navbar';
 import AuthControls from '../../components/AuthControls';
