@@ -4,7 +4,6 @@ const apiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(apiKey);
 
 export const FALLBACK_MODELS = [
-  'gemini-1.5-flash',
   'gemini-flash-latest'
 ];
 
