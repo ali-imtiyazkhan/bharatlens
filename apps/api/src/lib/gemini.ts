@@ -4,10 +4,8 @@ const apiKey = process.env.GEMINI_API_KEY || '';
 const genAI = new GoogleGenerativeAI(apiKey);
 
 export const FALLBACK_MODELS = [
-  'gemini-flash-latest',
   'gemini-1.5-flash',
-  'gemini-1.5-pro',
-  'gemini-1.0-pro'
+  'gemini-flash-latest'
 ];
 
 export const askGemini = async (prompt: string, context = 'General'): Promise<any> => {
@@ -19,7 +17,7 @@ export const askGemini = async (prompt: string, context = 'General'): Promise<an
       
       const currentModel = genAI.getGenerativeModel(
         { model: modelName },
-        { timeout: 15000 }
+        { timeout: 30000 }
       );
       
       const result = await currentModel.generateContent(prompt);
