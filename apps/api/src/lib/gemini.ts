@@ -1,0 +1,82 @@
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const apiKey = process.env.GEMINI_API_KEY || '';
+const genAI = new GoogleGenerativeAI(apiKey);
+
+// Standard, stable model identifiers for the Google AI Studio SDK
+export const FALLBACK_MODELS = [
+  'gemini-flash-latest',
+  'gemini-1.5-flash',
+  'gemini-1.5-pro',
+  'gemini-1.0-pro'
+];
+
+export const askGemini = async (prompt: string, context = 'General'): Promise<any> => {
+  let lastError: any;
+
+  for (const modelName of FALLBACK_MODELS) {
+    try {
+      console.log(`[GeminiUtil:${context}] Trying model: ${modelName}`);
+      
+      const currentModel = genAI.getGenerativeModel(
+        { model: modelName },
+        { timeout: 15000 } // 15 second timeout to prevent proxy hanging
+      );
+      
+      const result = await currentModel.generateContent(prompt);
+      const text = result.response.text();
+      
+      // Clean potential markdown blocks
+      const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      
+      try {
+        return JSON.parse(cleaned);
+      } catch (parseError) {
+        console.error(`[GeminiUtil:${context}] JSON Parse Error:`, cleaned.substring(0, 100));
+        throw new Error('Invalid JSON response from AI');
+      }
+    } catch (err: any) {
+      lastError = err;
+      console.warn(`[GeminiUtil:${context}] Model ${modelName} failed:`, err?.message || 'Unknown error');
+      
+      // Status 429: Rate Limit, Status 503: High Demand
+      if (err?.status === 429 || err?.status === 503) {
+        console.log(`[GeminiUtil:${context}] Service busy/limited. Waiting 1s...`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        continue;
+      }
+      
+      // If 404, the model ID might be wrong, continue immediately to next
+      if (err?.status === 404) {
+        continue;
+      }
+
+      continue;
+    }
+  }
+  
+  throw lastError;
+};
+
+export const askGeminiVision = async (base64Data: string, mimeType: string, prompt: string): Promise<any> => {
+  try {
+    // 1.5-flash is now the recommended multimodal model
+    const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+    const imageParts = [
+      {
+        inlineData: {
+          data: base64Data,
+          mimeType
+        }
+      }
+    ];
+
+    const result = await model.generateContent([prompt, ...imageParts]);
+    const text = result.response.text();
+    const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(cleaned);
+  } catch (error) {
+    console.error('[GeminiUtil:Vision] Error:', error);
+    throw error;
+  }
+};

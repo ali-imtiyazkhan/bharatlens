@@ -1,15 +1,7 @@
 import { Router } from 'express';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { askGemini, askGeminiVision } from '../lib/gemini';
 
 const router: Router = Router();
-const apiKey = process.env.GEMINI_API_KEY || '';
-const genAI = new GoogleGenerativeAI(apiKey);
-const FALLBACK_MODELS = [
-  'gemini-1.5-flash-latest', 
-  'gemini-1.5-pro-latest',
-  'gemini-flash-latest', 
-  'gemini-pro'
-];
 
 const FALLBACK_SITES = {
   sites: [
@@ -68,60 +60,6 @@ const FALLBACK_SITES = {
       temp: "28°C"
     }
   ]
-};
-
-const askGemini = async (prompt: string): Promise<any> => {
-  let lastError: any;
-  // Limit iterations and retries to prevent proxy timeout
-  for (const modelName of FALLBACK_MODELS) {
-    try {
-      console.log(`[ExploreAPI] Trying model: ${modelName}`);
-      const currentModel = genAI.getGenerativeModel(
-        { model: modelName },
-        { timeout: 10000 } // 10 second timeout per model
-      );
-      
-      const result = await currentModel.generateContent(prompt);
-      const text = result.response.text();
-      const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      return JSON.parse(cleaned);
-    } catch (err: any) {
-      lastError = err;
-      console.warn(`[ExploreAPI] Model ${modelName} failed:`, err?.message || 'Unknown error');
-      
-      if (err?.status === 429 || err?.status === 503) {
-        // Only retry once per model for 429/503
-        console.log(`[ExploreAPI] Rate limited. Waiting 1s...`);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        continue;
-      }
-      continue;
-    }
-  }
-  
-  console.error('[ExploreAPI] All Gemini models failed or timed out. Using static fallback data.');
-  return FALLBACK_SITES;
-};
-
-const askGeminiVision = async (base64Data: string, mimeType: string, prompt: string): Promise<any> => {
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
-    const imageParts = [
-      {
-        inlineData: {
-          data: base64Data,
-          mimeType
-        }
-      }
-    ];
-
-    const result = await model.generateContent([prompt, ...imageParts]);
-    const text = result.response.text();
-    const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    return JSON.parse(cleaned);
-  } catch (error) {
-    throw error;
-  }
 };
 
 router.post('/sites', async (req, res) => {

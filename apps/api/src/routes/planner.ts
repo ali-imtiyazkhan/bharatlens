@@ -1,49 +1,11 @@
 import { Router } from 'express';
 import { PrismaClient } from '@bharatlens/db';
 import { ItineraryRequest, ItineraryPlan, RecommendationRequest, RecommendationResponse, DestinationInsightsRequest, DestinationInsightsResponse } from '@bharatlens/types';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { askGemini } from '../lib/gemini';
 
 const router: Router = Router();
 const prisma = new PrismaClient();
-
 const apiKey = process.env.GEMINI_API_KEY || '';
-const genAI = new GoogleGenerativeAI(apiKey);
-const FALLBACK_MODELS = [
-  'gemini-1.5-flash-latest', 
-  'gemini-1.5-pro-latest',
-  'gemini-flash-latest', 
-  'gemini-pro'
-];
-
-const askGemini = async (prompt: string): Promise<any> => {
-  let lastError: any;
-
-  for (const modelName of FALLBACK_MODELS) {
-    try {
-      console.log(`Trying model: ${modelName}`);
-      const currentModel = genAI.getGenerativeModel({ model: modelName });
-      const result = await currentModel.generateContent(prompt);
-      const response = result.response;
-      const text = response.text();
-
-      const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      return JSON.parse(cleaned);
-    } catch (err: any) {
-      lastError = err;
-      console.log(`Model ${modelName} failed (${err.status || err.message}), trying next...`);
-
-      // If rate limited, wait briefly before trying the next model
-      if (err?.status === 429 || err?.status === 503) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        continue;
-      }
-      // For other errors, still try next model
-      continue;
-    }
-  }
-
-  throw lastError;
-};
 
 router.post('/generate', async (req, res) => {
   try {

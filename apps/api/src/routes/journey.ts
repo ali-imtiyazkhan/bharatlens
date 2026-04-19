@@ -1,39 +1,7 @@
 import { Router } from 'express';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { askGemini } from '../lib/gemini';
 
 const router: Router = Router();
-const apiKey = process.env.GEMINI_API_KEY || '';
-const genAI = new GoogleGenerativeAI(apiKey);
-const FALLBACK_MODELS = [
-  'gemini-1.5-flash-latest', 
-  'gemini-1.5-pro-latest',
-  'gemini-flash-latest', 
-  'gemini-pro'
-];
-
-const askGemini = async (prompt: string): Promise<any> => {
-  let lastError: any;
-  for (const modelName of FALLBACK_MODELS) {
-    try {
-      console.log(`[JourneyAPI] Trying model: ${modelName}`);
-      const currentModel = genAI.getGenerativeModel({ model: modelName });
-      const result = await currentModel.generateContent(prompt);
-      const text = result.response.text();
-      const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      return JSON.parse(cleaned);
-    } catch (err: any) {
-      lastError = err;
-      console.warn(`[JourneyAPI] Model ${modelName} failed:`, err?.message || 'Unknown error');
-      
-      if (err?.status === 429 || err?.status === 503) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        continue;
-      }
-      continue;
-    }
-  }
-  throw lastError;
-};
 
 router.post('/generate', async (req, res) => {
   try {
