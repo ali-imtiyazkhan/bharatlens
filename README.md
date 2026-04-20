@@ -28,6 +28,17 @@ Generate optimized, budget-conscious travel itineraries from North to South in s
 
 ---
 
+## 🎨 Premium UI & Experience
+
+BharatLens features a professional **"Studio" Aesthetic** designed for an immersive user experience:
+
+- **Immersive Mobile Menu**: A full-screen, portal-rendered navigation menu with high-fidelity glassmorphism and background blur.
+- **Custom Dropdown System**: Replaced standard browser elements with animated, responsive `CustomDropdown` components that adapt to mobile layouts without clipping.
+- **React Portal Layering**: Utilizes `react-dom/portal` to ensure critical UI overlays (menus, dropdowns) are isolated from page-specific stacking contexts, guaranteeing they always appear on the front screen.
+- **Smooth Interaction Design**: Powered by `framer-motion` for fluid transitions, spring-based animations, and responsive interactive feedback.
+
+---
+
 ## 🛠️ Technology Stack
 
 BharatLens is built as a high-performance **Monorepo** using:
