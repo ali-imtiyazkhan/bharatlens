@@ -65,17 +65,17 @@ export default function HeritageArchive() {
     <div className="page" style={{ minHeight: '100vh', background: '#050505' }}>
       <Navbar />
       
-      <main style={{ padding: '64px', maxWidth: 1400, margin: '0 auto' }}>
-        <header style={{ marginBottom: 64 }}>
+      <main style={{ padding: 'clamp(24px, 5vw, 64px)', maxWidth: 1400, margin: '0 auto' }}>
+        <header style={{ marginBottom: 'clamp(32px, 6vw, 64px)' }}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span style={{ fontSize: 10, fontWeight: 800, color: '#c9a84c', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Digital Preservation</span>
-            <h1 style={{ fontSize: 64, fontWeight: 900, marginTop: 16, marginBottom: 24, letterSpacing: '-0.03em' }}>Heritage <span style={{ color: '#c9a84c' }}>Archive</span></h1>
-            <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.5)', maxWidth: 600, lineHeight: 1.6 }}>
+            <h1 style={{ fontSize: 'clamp(32px, 8vw, 64px)', fontWeight: 900, marginTop: 16, marginBottom: 24, letterSpacing: '-0.03em', lineHeight: 1.1 }}>Heritage <span style={{ color: '#c9a84c' }}>Archive</span></h1>
+            <p style={{ fontSize: 'clamp(14px, 4vw, 18px)', color: 'rgba(255,255,255,0.5)', maxWidth: 600, lineHeight: 1.6 }}>
               A blockchain-verified digital library of India's cultural assets. Explore 3D models, historical maps, and high-fidelity captures of our shared history.
             </p>
           </motion.div>
 
-          <div style={{ display: 'flex', gap: 12, marginTop: 48, overflowX: 'auto', paddingBottom: 12 }}>
+          <div style={{ display: 'flex', gap: 12, marginTop: 48, overflowX: 'auto', paddingBottom: 12, scrollbarWidth: 'none' }}>
             {categories.map(cat => (
               <button 
                 key={cat} 
@@ -102,7 +102,11 @@ export default function HeritageArchive() {
             <button onClick={() => setFilter('All')} style={{ background: 'none', border: 'none', color: '#c9a84c', marginTop: 12, fontWeight: 800, cursor: 'pointer' }}>View all entries</button>
           </div>
         ) : (
-          <div style={{ columns: '3 300px', columnGap: 24 }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(280px, 45vw, 400px), 1fr))', 
+            gap: '24px' 
+          }}>
             {filteredSites.map((site, idx) => (
               <motion.div 
                 key={site.id}
@@ -111,7 +115,7 @@ export default function HeritageArchive() {
                 transition={{ delay: idx * 0.05 }}
                 onClick={() => setSelectedSite(site)}
                 style={{ 
-                  breakInside: 'avoid', marginBottom: 24, position: 'relative', borderRadius: 20, 
+                  position: 'relative', borderRadius: 20, 
                   overflow: 'hidden', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)',
                   background: '#111'
                 }}
@@ -119,7 +123,7 @@ export default function HeritageArchive() {
               >
                 <img 
                   src={site.images?.[0] || 'https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=1200'} 
-                  style={{ width: '100%', display: 'block', height: 'auto', minHeight: 200, objectFit: 'cover' }}
+                  style={{ width: '100%', display: 'block', height: '240px', objectFit: 'cover' }}
                   alt={site.name}
                 />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)' }} />
@@ -142,7 +146,7 @@ export default function HeritageArchive() {
             exit={{ opacity: 0 }}
             style={{ 
               position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.95)', 
-              backdropFilter: 'blur(20px)', padding: 64, display: 'flex', alignItems: 'center', justifyContent: 'center' 
+              backdropFilter: 'blur(20px)', padding: 'clamp(16px, 4vw, 64px)', display: 'flex', alignItems: 'center', justifyContent: 'center' 
             }}
             onClick={() => setSelectedSite(null)}
           >
@@ -150,41 +154,49 @@ export default function HeritageArchive() {
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              style={{ maxWidth: 1000, width: '100%', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 48, background: '#111', borderRadius: 32, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}
+              style={{ 
+                maxWidth: 1000, width: '100%', display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+                background: '#111', borderRadius: 32, overflow: 'hidden', 
+                border: '1px solid rgba(255,255,255,0.1)',
+                maxHeight: '90vh',
+                overflowY: 'auto',
+                position: 'relative'
+              }}
               onClick={e => e.stopPropagation()}
             >
-              <div style={{ position: 'relative', height: 600 }}>
+              <div style={{ position: 'relative', height: 'clamp(300px, 50vh, 600px)' }}>
                 <img src={selectedSite.images?.[0]} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="S" />
                 <div style={{ position: 'absolute', inset: 0, boxShadow: 'inset 0 0 100px rgba(0,0,0,0.5)' }} />
               </div>
               
-              <div style={{ padding: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <div style={{ padding: 'clamp(24px, 5vw, 48px)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
                   <span style={{ fontSize: 12, fontWeight: 800, color: '#c9a84c', background: 'rgba(201,168,76,0.1)', padding: '6px 16px', borderRadius: 20 }}>{selectedSite.category}</span>
                   {selectedSite.isVerified && <span style={{ fontSize: 10, fontWeight: 800, color: '#4ade80' }}>✓ VERIFIED ASSET</span>}
                 </div>
                 
-                <h2 style={{ fontSize: 48, fontWeight: 900, marginBottom: 16 }}>{selectedSite.name}</h2>
+                <h2 style={{ fontSize: 'clamp(28px, 6vw, 48px)', fontWeight: 900, marginBottom: 16 }}>{selectedSite.name}</h2>
                 <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', marginBottom: 32 }}>📍 {selectedSite.location}</div>
                 
                 <p style={{ fontSize: 16, lineHeight: 1.8, color: 'rgba(255,255,255,0.7)', marginBottom: 40 }}>
                   {selectedSite.description}
                 </p>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <button style={{ padding: '16px', borderRadius: 12, background: '#c9a84c', color: '#000', border: 'none', fontWeight: 800, cursor: 'pointer' }}>View 3D Model</button>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16 }}>
+                  <button style={{ padding: '16px', borderRadius: 12, background: '#c9a84c', color: '#000', border: 'none', fontWeight: 800, cursor: 'pointer', fontSize: 13 }}>View 3D Model</button>
                   <button 
                     onClick={() => setIsAudioOpen(true)}
-                    style={{ padding: '16px', borderRadius: 12, background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontWeight: 800, cursor: 'pointer' }}
+                    style={{ padding: '16px', borderRadius: 12, background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontWeight: 800, cursor: 'pointer', fontSize: 13 }}
                   >
-                    🔊 Listen to Narration
+                    🔊 Narration
                   </button>
                 </div>
               </div>
 
               <button 
                 onClick={() => setSelectedSite(null)}
-                style={{ position: 'absolute', top: 32, right: 32, background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', padding: '12px', borderRadius: '50%', cursor: 'pointer', zIndex: 10 }}
+                style={{ position: 'absolute', top: 24, right: 24, background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', padding: '12px', borderRadius: '50%', cursor: 'pointer', zIndex: 10 }}
               >
                 ✕
               </button>
