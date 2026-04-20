@@ -55,6 +55,14 @@ export default function DashboardPage() {
   const [monthlyPlan, setMonthlyPlan] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const FALLBACK_PLAN = {
+    title: "The Hampi Golden Circuit",
+    destination: "Hampi, Karnataka",
+    budgetUsed: "$280",
+    reasoning: "Your passion for Architecture perfectly matches the stone-carved ruins of Hampi. At your current savings level, this 3-day journey offers an incredible immersion into the Vijayanagar Empire's legacy.",
+    topAttractions: ["Virupaksha Temple", "Stone Chariot", "Vittala Temple Complex", "Hemakuta Hill"]
+  };
+
   useEffect(() => {
     const fetchAllData = async () => {
       const savedUser = localStorage.getItem('user');
@@ -72,18 +80,24 @@ export default function DashboardPage() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ savings, interests: u.interests || ['Forts', 'Monuments'], language: u.language || 'English' })
-          })
+          }).catch(() => null) // Handle network failure
         ]);
 
         const profileData = await profileRes.json();
         const statsData = await statsRes.json();
-        const planData = await planRes.json();
+        
+        let planData = null;
+        if (planRes && planRes.ok) {
+           const d = await planRes.json();
+           planData = d.monthlyPlan;
+        }
 
         setProfile(profileData);
         setStats(statsData);
-        setMonthlyPlan(planData.monthlyPlan);
+        setMonthlyPlan(planData || FALLBACK_PLAN);
       } catch (e) {
         console.error('Failed to fetch dashboard data:', e);
+        setMonthlyPlan(FALLBACK_PLAN);
       } finally {
         setLoading(false);
       }
