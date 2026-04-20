@@ -18,6 +18,7 @@ import narrationRoutes from './routes/narration';
 import rewardsRoutes from './routes/rewards';
 import chatRoutes from './routes/chat';
 import communityRoutes from './routes/communities';
+import enhancedPlannerRoutes from './routes/enhanced-planner';
 
 const app = express();
 
@@ -96,6 +97,7 @@ app.use('/api/narration', narrationRoutes);
 app.use('/api/rewards', rewardsRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/communities', communityRoutes);
+app.use('/api/enhanced-planner', enhancedPlannerRoutes);
 
 httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT} (HTTP + WebSockets)`);
