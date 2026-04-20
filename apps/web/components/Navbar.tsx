@@ -37,6 +37,7 @@ export default function Navbar() {
     { name: 'Home', path: '/' },
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'AI Planner', path: '/planner' },
+    { name: 'Neural AI ✦', path: '/advanced-planner' },
   ];
 
   const dropdownLinks = [
