@@ -106,7 +106,6 @@ export default function TranslatorPage() {
   return (
     <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}>
       
-      {/* Top Half: Local (Inverted for easy reading if facing phone flat) */}
       <div style={{ flex: 1, background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)', position: 'relative', display: 'flex', flexDirection: 'column', padding: 32, transform: 'rotate(180deg)', borderBottom: '2px solid rgba(255,255,255,0.05)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 50 }}>
           <div style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: "'Outfit', sans-serif", opacity: 0.5 }}>Local Guide</div>

@@ -227,18 +227,36 @@ export default function Navbar() {
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobile && isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            style={{
-              position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-              background: '#080808', 
-              padding: '100px 32px 32px', zIndex: 90, display: 'flex', flexDirection: 'column', gap: 40,
-              overflowY: 'auto'
-            }}
-          >
+          <>
+            {/* Backdrop Blur Layer */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{
+                position: 'fixed', inset: 0,
+                background: 'rgba(5, 5, 5, 0.6)',
+                backdropFilter: 'blur(30px)',
+                WebkitBackdropFilter: 'blur(30px)',
+                zIndex: 9998
+              }}
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              style={{
+                position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                background: 'rgba(8, 8, 8, 0.8)', 
+                padding: '100px 32px 32px', 
+                zIndex: 9999, 
+                display: 'flex', flexDirection: 'column', gap: 40,
+                overflowY: 'auto'
+              }}
+            >
             {/* Lang switcher on mobile inside menu */}
             <div style={{ marginBottom: 8 }}>
               <CustomDropdown 
@@ -315,8 +333,9 @@ export default function Navbar() {
               <AuthControls />
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </>
+      )}
+    </AnimatePresence>
 
       <style dangerouslySetInnerHTML={{__html: `
         .nav-dropdown-item {
