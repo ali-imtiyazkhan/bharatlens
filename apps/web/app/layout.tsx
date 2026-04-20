@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 };
 
 import StudioBackground from "../components/StudioBackground";
+import SystemWakeup from "../components/SystemWakeup";
 
 export default function RootLayout({
   children,
@@ -18,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ margin: 0, padding: 0, background: '#080808' }}>
+        <SystemWakeup />
         <StudioBackground />
         <div style={{ position: 'relative', zIndex: 1 }}>{children}</div>
       </body>

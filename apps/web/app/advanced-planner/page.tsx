@@ -88,15 +88,30 @@ export default function AdvancedPlannerPage() {
   const [interests, setInterests] = useState<string[]>(["History", "Architecture"]);
   
   const [loading, setLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
   const [result, setResult] = useState<EnhancedPlan | null>(null);
   const [context, setContext] = useState<RealTimeContext | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [activeDay, setActiveDay] = useState(0);
 
+  const LOADING_STEPS = [
+    "Initializing Neural Connection...",
+    "Scanning Heritage Database...",
+    "Fetching Real-time Weather Patterns...",
+    "Analyzing Local Crowd Density...",
+    "Synchronizing User Behavioral Profile...",
+    "Synthesizing Environment-Aware Itinerary..."
+  ];
+
   const handleGenerate = async () => {
     if (!destination) return;
     setLoading(true);
     setResult(null);
+    setLoadingStep(0);
+
+    const stepInterval = setInterval(() => {
+      setLoadingStep(prev => (prev < LOADING_STEPS.length - 1 ? prev + 1 : prev));
+    }, 4500);
 
     const savedUser = localStorage.getItem('user');
     let userId = 'cloym1u4g0000r9v0v0v0v0v0'; // Fallback for demo
@@ -112,17 +127,22 @@ export default function AdvancedPlannerPage() {
       });
       const data = await res.json();
       
-      // The API returns { plan: string_of_json, meta: { analyzedContext, userProfile } }
-      // We need to parse plan if it's a string
       const parsedPlan = typeof data.plan === 'string' ? JSON.parse(data.plan) : data.plan;
       
-      setResult(parsedPlan);
-      setContext(data.meta.analyzedContext);
-      setProfile(data.meta.userProfile);
-      setActiveDay(0);
+      clearInterval(stepInterval);
+      setLoadingStep(LOADING_STEPS.length - 1);
+      
+      // Artificial delay for smooth transition if it was too fast
+      setTimeout(() => {
+        setResult(parsedPlan);
+        setContext(data.meta.analyzedContext);
+        setProfile(data.meta.userProfile);
+        setActiveDay(0);
+        setLoading(false);
+      }, 800);
     } catch (e) {
       console.error(e);
-    } finally {
+      clearInterval(stepInterval);
       setLoading(false);
     }
   };
@@ -286,11 +306,63 @@ export default function AdvancedPlannerPage() {
           )}
         </AnimatePresence>
 
-        {/* Empty State */}
+        {/* Empty State / Loading */}
         {!result && !loading && (
           <div style={{ height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.3 }}>
             <Compass size={60} strokeWidth={1} style={{ marginBottom: 24 }} />
             <p style={{ fontWeight: 700, letterSpacing: '0.1em' }}>WAITING FOR NEURAL INPUT</p>
+          </div>
+        )}
+
+        {loading && (
+          <div style={{ padding: 60, background: 'rgba(255,255,255,0.01)', borderRadius: 32, border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+            <motion.div 
+              animate={{ y: [0, 400, 0] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+              style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, transparent, #c9a84c, transparent)', zIndex: 10, filter: 'blur(2px)' }}
+            />
+            
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
+              <div className="neuron-loader">
+                <div className="neuron-core" />
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className={`neuron-ring ring-${i}`} />
+                ))}
+              </div>
+              
+              <div style={{ width: '100%', maxWidth: 400 }}>
+                <AnimatePresence mode="wait">
+                  <motion.div 
+                    key={loadingStep}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    style={{ fontSize: 18, fontWeight: 700, color: '#c9a84c', marginBottom: 16 }}
+                  >
+                    {LOADING_STEPS[loadingStep]}
+                  </motion.div>
+                </AnimatePresence>
+                
+                <div style={{ height: 6, background: 'rgba(255,255,255,0.05)', borderRadius: 3, overflow: 'hidden' }}>
+                  <motion.div 
+                    animate={{ width: `${((loadingStep + 1) / LOADING_STEPS.length) * 100}%` }}
+                    style={{ height: '100%', background: '#c9a84c', boxShadow: '0 0 15px #c9a84c' }}
+                  />
+                </div>
+                
+                <div style={{ marginTop: 24, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, opacity: 0.5 }}>
+                  {LOADING_STEPS.map((step, i) => (
+                    <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: i <= loadingStep ? '#c9a84c' : 'rgba(255,255,255,0.2)' }} />
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ maxWidth: 500, color: 'rgba(255,255,255,0.4)', fontSize: 12, lineHeight: 1.6 }}>
+                <ShieldCheck size={14} style={{ marginRight: 6, display: 'inline' }} />
+                ESTABLISHING SECURE REAL-TIME HANDSHAKE WITH BHARATLENS NEURAL CLOUD. 
+                INITIALIZATION MAY TAKE UP TO 30 SECONDS DURING HEAVY LOAD PEAKS.
+              </div>
+            </div>
           </div>
         )}
 
@@ -305,6 +377,41 @@ export default function AdvancedPlannerPage() {
           border-radius: 50%;
           animation: spin 0.8s linear infinite;
         }
+
+        .neuron-loader {
+          width: 80px;
+          height: 80px;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justifyContent: center;
+        }
+
+        .neuron-core {
+          width: 12px;
+          height: 12px;
+          background: #c9a84c;
+          border-radius: 50%;
+          box-shadow: 0 0 20px #c9a84c;
+          z-index: 5;
+        }
+
+        .neuron-ring {
+          position: absolute;
+          border: 1px solid rgba(201, 168, 76, 0.2);
+          border-radius: 50%;
+          animation: pulse 3s infinite ease-in-out;
+        }
+
+        .ring-0 { width: 30px; height: 30px; animation-delay: 0s; }
+        .ring-1 { width: 50px; height: 50px; animation-delay: 0.5s; }
+        .ring-2 { width: 80px; height: 80px; animation-delay: 1s; }
+
+        @keyframes pulse {
+          0%, 100% { transform: scale(0.8); opacity: 0.3; }
+          50% { transform: scale(1.1); opacity: 1; }
+        }
+
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
