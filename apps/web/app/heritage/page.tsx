@@ -65,25 +65,37 @@ const figures = [
 export default function HeritageVoicesPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', fontFamily: "'Outfit', sans-serif" }}>
-      <nav style={{ padding: '24px 64px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <Link href="/" style={{ color: '#fff', textDecoration: 'none', fontSize: 14, fontWeight: 700, padding: '8px 16px', background: 'rgba(255,255,255,0.05)', borderRadius: 20 }}>
-          ← Back to Home
+      <nav style={{ 
+        padding: '16px 24px', 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        flexWrap: 'wrap',
+        gap: '16px'
+      }}>
+        <Link href="/" style={{ color: '#fff', textDecoration: 'none', fontSize: 12, fontWeight: 700, padding: '8px 16px', background: 'rgba(255,255,255,0.05)', borderRadius: 20 }}>
+          ← <span className="hide-mobile">Back to Home</span>
         </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <div style={{ color: '#c9a84c', fontSize: 13, fontWeight: 800, letterSpacing: '0.1em' }}>HERITAGE VOICES</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ color: '#c9a84c', fontSize: 11, fontWeight: 800, letterSpacing: '0.1em' }}>HERITAGE VOICES</div>
           <AuthControls />
         </div>
       </nav>
 
-      <main style={{ padding: '64px', maxWidth: 1200, margin: '0 auto' }}>
+      <main style={{ padding: 'clamp(24px, 5vw, 64px)', maxWidth: 1200, margin: '0 auto' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 style={{ fontSize: 56, fontWeight: 900, marginBottom: 16 }}>Talk to History</h1>
-          <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.6)', maxWidth: 600, lineHeight: 1.6, marginBottom: 64 }}>
+          <h1 style={{ fontSize: 'clamp(32px, 8vw, 56px)', fontWeight: 900, marginBottom: 16 }}>Talk to History</h1>
+          <p style={{ fontSize: 'clamp(14px, 4vw, 18px)', color: 'rgba(255,255,255,0.6)', maxWidth: 600, lineHeight: 1.6, marginBottom: 'clamp(32px, 6vw, 64px)' }}>
             Experience history like never before. Stand at the exact locations where they made history, and use your device to converse with the figures who shaped India.
           </p>
         </motion.div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
+          gap: 'clamp(16px, 4vw, 32px)' 
+        }}>
           {figures.map((figure, idx) => (
             <motion.div 
               key={figure.id}
@@ -91,20 +103,20 @@ export default function HeritageVoicesPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
               className="group"
-              style={{ position: 'relative', borderRadius: 24, overflow: 'hidden', height: 400 }}
+              style={{ position: 'relative', borderRadius: 24, overflow: 'hidden', height: 'clamp(350px, 50vh, 400px)' }}
             >
               <div style={{ position: 'absolute', inset: 0, background: `url(${figure.image}) center/cover`, transition: 'transform 0.5s', transform: 'scale(1.05)' }} className="bg-img" />
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.2))' }} />
               
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 32 }}>
-                <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-                  <span style={{ fontSize: 11, fontWeight: 800, background: 'rgba(201,168,76,0.2)', color: '#c9a84c', padding: '4px 10px', borderRadius: 4 }}>📍 {figure.site}</span>
-                  <span style={{ fontSize: 11, fontWeight: 800, background: 'rgba(255,255,255,0.1)', color: '#fff', padding: '4px 10px', borderRadius: 4 }}>{figure.era}</span>
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 'clamp(20px, 4vw, 32px)' }}>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(201,168,76,0.2)', color: '#c9a84c', padding: '4px 10px', borderRadius: 4 }}>📍 {figure.site}</span>
+                  <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(255,255,255,0.1)', color: '#fff', padding: '4px 10px', borderRadius: 4 }}>{figure.era}</span>
                 </div>
-                <h2 style={{ fontSize: 32, fontWeight: 800, marginBottom: 8 }}>{figure.name}</h2>
-                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)', marginBottom: 24, lineHeight: 1.5 }}>{figure.description}</p>
+                <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800, marginBottom: 8 }}>{figure.name}</h2>
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginBottom: 24, lineHeight: 1.5 }}>{figure.description}</p>
                 
-                <Link href={`/heritage/${figure.id}`} style={{ display: 'inline-block', background: '#c9a84c', color: '#000', padding: '12px 24px', borderRadius: 8, fontWeight: 800, textDecoration: 'none', fontSize: 14 }}>
+                <Link href={`/heritage/${figure.id}`} style={{ display: 'inline-block', background: '#c9a84c', color: '#000', padding: '12px 24px', borderRadius: 8, fontWeight: 800, textDecoration: 'none', fontSize: 13 }}>
                   Connect with {figure.name.split(' ')[0]} →
                 </Link>
               </div>
@@ -115,6 +127,9 @@ export default function HeritageVoicesPage() {
 
       <style dangerouslySetInnerHTML={{__html: `
         .bg-img:hover { transform: scale(1.1); }
+        @media (max-width: 480px) {
+          .group { height: 450px !important; }
+        }
       `}} />
     </div>
   );

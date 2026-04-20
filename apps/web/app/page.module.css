@@ -342,11 +342,43 @@
   .nav { padding: 18px 24px; }
   .navCenter { display: none; }
   .hero { padding: 48px 24px 40px; }
-  .featGrid { grid-template-columns: repeat(2, 1fr); }
-  .featCard:nth-child(2n)  { border-right: none; }
-  .featCard:nth-child(n+7) { border-bottom: none; }
-  .featCard:nth-child(4n)  { border-right: 0.5px solid var(--gold-line); }
-  .footer { grid-template-columns: 1fr 1fr; gap: 24px; padding: 24px; }
-  .footCopy { grid-column: 2; }
-  .statsStrip { max-width: 100%; }
+  
+  .h1Top { fontSize: clamp(42px, 8vw, 72px); }
+  .h1Italic { fontSize: clamp(48px, 9vw, 82px); }
+  .h1Bottom { fontSize: clamp(38px, 7.5vw, 68px); }
+  
+  .ctaRow { flex-direction: column; width: 100%; gap: 12px; }
+  .ctaPrimary, .ctaSecondary { width: 100%; text-align: center; }
+
+  .featGrid { grid-template-columns: 1fr; border-top: none; }
+  .featCard { border-right: none !important; border-top: 0.5px solid var(--gold-line); }
+  .featCard:first-child { border-top: none; }
+  .featCard:hover { background: var(--gold-dim); }
+
+  .footer { 
+    grid-template-columns: 1fr; 
+    gap: 32px; 
+    padding: 40px 24px;
+    text-align: center;
+  }
+  .footLinks { align-items: center; }
+  .footTime { grid-row: auto; }
+  .footCopy { 
+    grid-column: 1; 
+    text-align: center; 
+    margin-top: 24px;
+    border-top: 0.5px solid rgba(255,255,255,0.05);
+    padding-top: 24px;
+    width: 100%;
+  }
+
+  .statsStrip { 
+    flex-direction: column; 
+    max-width: 100%; 
+  }
+  .statCell {
+    border-right: none;
+    border-bottom: 0.5px solid var(--gold-line);
+  }
+  .statCell:last-child { border-bottom: none; }
 }

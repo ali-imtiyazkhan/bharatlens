@@ -196,7 +196,7 @@ export default function PlannerPage() {
 
       <div className="planner-container">
         {/* Left Panel — Form */}
-        <div className="planner-form-panel" style={{ padding: '40px 48px' }}>
+        <div className="planner-form-panel">
           <span className="section-label">AI TRIP PLANNER</span>
           <h1 className="planner-title">
             Plan your <span className="planner-accent">perfect</span> trip.
@@ -292,7 +292,7 @@ export default function PlannerPage() {
         </div>
 
         {/* Right Panel — Result */}
-        <div className="planner-result-panel" style={{ padding: '40px 48px' }}>
+        <div className="planner-result-panel">
           {!result && !loading && (
             <div className="empty-state">
               <div className="empty-icon">✦</div>
@@ -321,9 +321,10 @@ export default function PlannerPage() {
               {/* Destination Image Cover with Header */}
               {destinationImage && (
                 <div
+                  className="itinerary-cover"
                   style={{
                     width: "100%",
-                    height: "260px",
+                    height: "clamp(200px, 40vh, 320px)",
                     borderRadius: "16px",
                     marginBottom: "32px",
                     backgroundImage: `url(${destinationImage})`,
@@ -335,12 +336,16 @@ export default function PlannerPage() {
                   }}
                 >
                   <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)" }} />
-                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "28px", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                    <div>
-                      <h2 style={{ fontFamily: "Outfit, sans-serif", fontSize: "36px", fontWeight: 800, color: "#fff", margin: 0, marginBottom: "8px", letterSpacing: "-0.02em" }}>
+                  <div style={{ 
+                    position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px", 
+                    display: "flex", justifyContent: "space-between", alignItems: "flex-end",
+                    flexWrap: "wrap", gap: "16px"
+                  }}>
+                    <div style={{ flex: 1, minWidth: "200px" }}>
+                      <h2 style={{ fontFamily: "Outfit, sans-serif", fontSize: "clamp(24px, 5vw, 36px)", fontWeight: 800, color: "#fff", margin: 0, marginBottom: "8px", letterSpacing: "-0.02em" }}>
                         {result.title}
                       </h2>
-                      <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "11px", color: "rgba(125,212,176,0.9)", margin: 0, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                      <p style={{ fontFamily: "Montserrat, sans-serif", fontSize: "10px", color: "rgba(125,212,176,0.9)", margin: 0, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>
                         {result.days} days · {result.budget} · {result.destination}
                       </p>
                     </div>
