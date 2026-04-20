@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, ChevronDown, Globe, Sparkles } from 'lucide-react';
 import AuthControls from './AuthControls';
+import CustomDropdown from './CustomDropdown';
 import { useUser } from '../hooks/use-user';
 import { Language, getTranslation } from '../lib/i18n';
 
@@ -15,6 +17,7 @@ export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isMoreOpenMobile, setIsMoreOpenMobile] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -47,6 +50,11 @@ export default function Navbar() {
     { name: 'AR Camera', path: '/ar-camera' },
   ];
 
+  const langOptions = [
+    { value: 'en', label: 'English', icon: '🇺🇸' },
+    { value: 'hi', label: 'Hindi', icon: '🇮🇳' },
+  ];
+
   return (
     <nav style={{
       position: 'sticky',
@@ -55,7 +63,7 @@ export default function Navbar() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: isMobile ? '16px 24px' : '20px 48px',
+      padding: isMobile ? '12px 24px' : '16px 48px',
       borderBottom: '0.5px solid rgba(201, 168, 76, 0.25)',
       background: 'rgba(8, 8, 8, 0.85)',
       backdropFilter: 'blur(20px)',
@@ -64,42 +72,52 @@ export default function Navbar() {
       {/* Brand */}
       <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
         <div style={{
-          width: 24, height: 24,
-          border: '0.5px solid #c9a84c',
+          width: 28, height: 28,
+          border: '1px solid #c9a84c',
           borderRadius: '50%',
           position: 'relative',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 0 15px rgba(201, 168, 76, 0.2)'
         }}>
           <div style={{
             position: 'absolute',
-            width: 12, height: 12,
-            border: '0.5px solid #c9a84c',
+            width: 14, height: 14,
+            border: '1px solid #c9a84c',
             borderRadius: '50%',
+            opacity: 0.5
           }} />
+          <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#c9a84c' }} />
         </div>
         <span style={{
           fontFamily: "'Outfit', sans-serif",
-          fontSize: isMobile ? 12 : 14,
-          fontWeight: 800,
-          letterSpacing: '0.2em',
+          fontSize: isMobile ? 14 : 16,
+          fontWeight: 900,
+          letterSpacing: '0.25em',
           color: '#f0ece4',
+          background: 'linear-gradient(to right, #f0ece4, #c9a84c)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
         }}>BHARATLENS</span>
       </Link>
 
       {/* Desktop Nav */}
       {!isMobile && (
-        <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
           {mainLinks.map((link) => (
             <Link 
               key={link.path}
               href={link.path} 
               style={{ 
-                fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textDecoration: 'none', transition: 'all 0.3s',
-                color: isActive(link.path) ? '#c9a84c' : 'rgba(240, 236, 228, 0.45)',
-                textTransform: 'uppercase'
+                fontSize: 11, fontWeight: 800, letterSpacing: '0.15em', textDecoration: 'none', transition: 'all 0.3s',
+                color: isActive(link.path) ? '#c9a84c' : 'rgba(240, 236, 228, 0.4)',
+                textTransform: 'uppercase',
+                position: 'relative'
               }}
             >
               {link.name}
+              {isActive(link.path) && (
+                <motion.div layoutId="nav-line" style={{ position: 'absolute', bottom: -4, left: 0, right: 0, height: 1.5, background: '#c9a84c', borderRadius: 2 }} />
+              )}
             </Link>
           ))}
 
@@ -110,36 +128,39 @@ export default function Navbar() {
           >
             <button style={{ 
               background: 'none', border: 'none', cursor: 'pointer',
-              fontSize: 11, fontWeight: 700, letterSpacing: '0.12em',
-              color: isDropdownOpen ? '#c9a84c' : 'rgba(240, 236, 228, 0.45)',
+              fontSize: 11, fontWeight: 800, letterSpacing: '0.15em',
+              color: isDropdownOpen ? '#c9a84c' : 'rgba(240, 236, 228, 0.4)',
               display: 'flex', alignItems: 'center', gap: 6, textTransform: 'uppercase', transition: 'all 0.3s'
             }}>
-              MORE <span style={{ fontSize: 8, transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }}>▼</span>
+              DISCOVER <ChevronDown size={12} style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
             </button>
 
             <AnimatePresence>
               {isDropdownOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  initial={{ opacity: 0, y: 15, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
                   style={{
                     position: 'absolute',
                     top: '100%',
-                    right: -60,
-                    width: 220,
-                    background: 'rgba(12, 12, 12, 0.95)',
-                    backdropFilter: 'blur(24px)',
+                    right: -100,
+                    width: 260,
+                    background: 'rgba(10, 10, 10, 0.98)',
+                    backdropFilter: 'blur(30px)',
                     border: '1px solid rgba(201, 168, 76, 0.2)',
-                    borderRadius: 20,
-                    padding: '12px',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
-                    display: 'flex',
-                    flexDirection: 'column',
+                    borderRadius: 24,
+                    padding: '16px',
+                    boxShadow: '0 30px 60px rgba(0,0,0,0.8)',
+                    display: 'grid',
+                    gridTemplateColumns: '1fr',
                     gap: 4
                   }}
                 >
+                  <div style={{ padding: '0 12px 12px', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: 8 }}>
+                    <span style={{ fontSize: 9, color: '#c9a84c', fontWeight: 900, letterSpacing: '0.1em' }}>EXPLORE INDIA</span>
+                  </div>
                   {dropdownLinks.map((link) => (
                     <Link
                       key={link.path}
@@ -147,7 +168,7 @@ export default function Navbar() {
                       onClick={() => setIsDropdownOpen(false)}
                       className="nav-dropdown-item"
                     >
-                      <span>{link.name}</span>
+                      <span style={{ fontSize: 13, fontWeight: 700 }}>{link.name}</span>
                     </Link>
                   ))}
                 </motion.div>
@@ -158,38 +179,28 @@ export default function Navbar() {
       )}
 
       {/* Auth & HP & Lang */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 12 : 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 16 : 24 }}>
         {!isMobile && (
-          <select 
-            value={lang} 
-            onChange={(e) => setLang(e.target.value as Language)}
-            style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: 8,
-              color: '#c9a84c',
-              fontSize: 10,
-              fontWeight: 800,
-              padding: '4px 8px',
-              outline: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <option value="en">EN</option>
-            <option value="hi">HI</option>
-          </select>
+          <div style={{ width: 110 }}>
+            <CustomDropdown 
+              options={langOptions}
+              value={lang}
+              onChange={(v) => setLang(v as Language)}
+            />
+          </div>
         )}
 
         {user && (
           <div style={{ 
-            display: 'flex', alignItems: 'center', gap: 6, 
-            background: 'rgba(201, 168, 76, 0.1)', 
-            padding: isMobile ? '4px 10px' : '6px 14px', borderRadius: 20,
-            border: '1px solid rgba(201, 168, 76, 0.3)'
+            display: 'flex', alignItems: 'center', gap: 8, 
+            background: 'rgba(201, 168, 76, 0.08)', 
+            padding: isMobile ? '6px 12px' : '8px 16px', borderRadius: 24,
+            border: '1px solid rgba(201, 168, 76, 0.2)',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
           }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#c9a84c' }} />
-            <span style={{ fontSize: isMobile ? 11 : 13, fontWeight: 900, color: '#c9a84c', fontFamily: "'Outfit', sans-serif" }}>
-              {user.tokens} <span style={{ fontSize: 9, opacity: 0.6 }}>{t.hp}</span>
+            <Sparkles size={14} color="#c9a84c" />
+            <span style={{ fontSize: isMobile ? 12 : 14, fontWeight: 900, color: '#c9a84c', fontFamily: "'Outfit', sans-serif" }}>
+              {user.tokens} <span style={{ fontSize: 10, opacity: 0.5, marginLeft: 2 }}>{t.hp}</span>
             </span>
           </div>
         )}
@@ -203,104 +214,129 @@ export default function Navbar() {
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             style={{ 
-              background: 'none', border: 'none', cursor: 'pointer', padding: 4,
-              display: 'flex', flexDirection: 'column', gap: 5, width: 24
+              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', 
+              cursor: 'pointer', padding: 10, borderRadius: 12,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c9a84c'
             }}
           >
-            <motion.div animate={{ rotate: isMobileMenuOpen ? 45 : 0, y: isMobileMenuOpen ? 7 : 0 }} style={{ height: 2, background: '#f0ece4', width: '100%', borderRadius: 2 }} />
-            <motion.div animate={{ opacity: isMobileMenuOpen ? 0 : 1 }} style={{ height: 2, background: '#f0ece4', width: '100%', borderRadius: 2 }} />
-            <motion.div animate={{ rotate: isMobileMenuOpen ? -45 : 0, y: isMobileMenuOpen ? -7 : 0 }} style={{ height: 2, background: '#f0ece4', width: '100%', borderRadius: 2 }} />
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         )}
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobile && isMobileMenuOpen && (
-          <>
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-              style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 90 }}
-            />
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              style={{
-                position: 'fixed', top: 0, right: 0, bottom: 0, width: '80%',
-                background: '#0c0c0c', borderLeft: '1px solid rgba(201, 168, 76, 0.2)',
-                padding: '80px 32px 32px', zIndex: 100, display: 'flex', flexDirection: 'column', gap: 24,
-                overflowY: 'auto'
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <span style={{ fontSize: 10, color: '#c9a84c', fontWeight: 800, letterSpacing: '0.1em' }}>MENU</span>
-                {mainLinks.map((link) => (
-                  <Link 
-                    key={link.path}
-                    href={link.path} 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    style={{ 
-                      fontSize: 18, fontWeight: 800, color: isActive(link.path) ? '#c9a84c' : '#f0ece4',
-                      textDecoration: 'none', letterSpacing: '-0.02em'
-                    }}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            style={{
+              position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+              background: '#080808', 
+              padding: '100px 32px 32px', zIndex: 90, display: 'flex', flexDirection: 'column', gap: 40,
+              overflowY: 'auto'
+            }}
+          >
+            {/* Lang switcher on mobile inside menu */}
+            <div style={{ marginBottom: 8 }}>
+              <CustomDropdown 
+                options={langOptions}
+                value={lang}
+                onChange={(v) => {
+                  setLang(v as Language);
+                  setIsMobileMenuOpen(false);
+                }}
+                label="Select Language"
+                fullWidth
+              />
+            </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 12, borderTop: '0.5px solid rgba(255,255,255,0.1)', paddingTop: 24 }}>
-                <span style={{ fontSize: 10, color: '#c9a84c', fontWeight: 800, letterSpacing: '0.1em' }}>DISCOVER</span>
-                {dropdownLinks.map((link) => (
-                  <Link 
-                    key={link.path}
-                    href={link.path} 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    style={{ 
-                      fontSize: 14, fontWeight: 700, color: 'rgba(240, 236, 228, 0.6)',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              <span style={{ fontSize: 10, color: '#c9a84c', fontWeight: 900, letterSpacing: '0.2em' }}>NAVIGATION</span>
+              {mainLinks.map((link) => (
+                <Link 
+                  key={link.path}
+                  href={link.path} 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  style={{ 
+                    fontSize: 32, fontWeight: 900, color: isActive(link.path) ? '#c9a84c' : '#f0ece4',
+                    textDecoration: 'none', letterSpacing: '-0.02em',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                  }}
+                >
+                  {link.name}
+                  {isActive(link.path) && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#c9a84c' }} />}
+                </Link>
+              ))}
+            </div>
 
-              <div style={{ marginTop: 'auto', paddingTop: 32 }}>
-                <AuthControls />
-              </div>
-            </motion.div>
-          </>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <button 
+                onClick={() => setIsMoreOpenMobile(!isMoreOpenMobile)}
+                style={{
+                  background: 'none', border: 'none', width: '100%', display: 'flex', justifyContent: 'space-between',
+                  alignItems: 'center', color: '#c9a84c', cursor: 'pointer', padding: '12px 0',
+                  borderTop: '1px solid rgba(255,255,255,0.05)'
+                }}
+              >
+                <span style={{ fontSize: 12, fontWeight: 900, letterSpacing: '0.2em' }}>DISCOVER MORE</span>
+                <ChevronDown size={18} style={{ transform: isMoreOpenMobile ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
+              </button>
+              
+              <AnimatePresence>
+                {isMoreOpenMobile && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: 12, paddingLeft: 16 }}
+                  >
+                    {dropdownLinks.map((link) => (
+                      <Link 
+                        key={link.path}
+                        href={link.path} 
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        style={{ 
+                          fontSize: 18, fontWeight: 700, color: 'rgba(240, 236, 228, 0.6)',
+                          textDecoration: 'none'
+                        }}
+                      >
+                        {link.name}
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div style={{ marginTop: 'auto', paddingTop: 40, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+              <AuthControls />
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
       <style dangerouslySetInnerHTML={{__html: `
         .nav-dropdown-item {
-          padding: 12px 16px;
-          border-radius: 12px;
+          padding: 12px 14px;
+          border-radius: 16px;
           text-decoration: none;
           display: flex;
           align-items: center;
-          gap: 12,
+          gap: 12;
           transition: all 0.2s;
           background: transparent;
-        }
-        .nav-dropdown-item span {
-          fontSize: 12px;
-          fontWeight: 700;
-          color: rgba(240, 236, 228, 0.7);
-          letterSpacing: 0.05em;
+          color: rgba(240, 236, 228, 0.6);
         }
         .nav-dropdown-item:hover {
-          background: rgba(255, 255, 255, 0.05);
+          background: rgba(201, 168, 76, 0.1);
+          color: #c9a84c;
+          padding-left: 18px;
         }
-        .nav-dropdown-item:hover span {
-          color: #c9a84c !important;
+        @media (max-width: 1024px) {
+          .hide-mobile { display: none; }
         }
       `}} />
     </nav>

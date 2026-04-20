@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../components/Navbar';
+import CustomDropdown from '../../components/CustomDropdown';
 import { API_BASE } from '../../lib/api-config';
 import AudioPlayer from '../../components/AudioPlayer';
 
@@ -13,8 +14,13 @@ export default function HeritageArchive() {
   const [selectedSite, setSelectedSite] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isAudioOpen, setIsAudioOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
     async function fetchSites() {
       try {
         const res = await fetch(`${API_BASE}/api/heritage/all`);
@@ -36,9 +42,15 @@ export default function HeritageArchive() {
       }
     }
     fetchSites();
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const categories = ['All', ...new Set(sites.map(s => s.category).filter(Boolean))];
+  const dropdownOptions = categories.map(cat => ({
+    value: cat,
+    label: cat === 'All' ? 'All Sites' : cat
+  }));
+
   const filteredSites = filter === 'All' ? sites : sites.filter(s => s.category === filter);
 
   if (error) {
@@ -75,24 +87,36 @@ export default function HeritageArchive() {
             </p>
           </motion.div>
 
-          <div style={{ display: 'flex', gap: 12, marginTop: 48, overflowX: 'auto', paddingBottom: 12, scrollbarWidth: 'none' }}>
-            {categories.map(cat => (
-              <button 
-                key={cat} 
-                onClick={() => setFilter(cat)}
-                style={{ 
-                  padding: '10px 24px', borderRadius: 30, fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                  background: filter === cat ? '#c9a84c' : 'rgba(255,255,255,0.03)',
-                  color: filter === cat ? '#000' : 'rgba(255,255,255,0.6)',
-                  border: '1px solid ' + (filter === cat ? '#c9a84c' : 'rgba(255,255,255,0.08)'),
-                  transition: 'all 0.3s',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+          {isMobile ? (
+            <div style={{ marginTop: 32, maxWidth: 400 }}>
+              <CustomDropdown 
+                options={dropdownOptions}
+                value={filter}
+                onChange={setFilter}
+                label="Filter by Category"
+                fullWidth
+              />
+            </div>
+          ) : (
+            <div style={{ display: 'flex', gap: 12, marginTop: 48, overflowX: 'auto', paddingBottom: 12, scrollbarWidth: 'none' }}>
+              {categories.map(cat => (
+                <button 
+                  key={cat} 
+                  onClick={() => setFilter(cat)}
+                  style={{ 
+                    padding: '10px 24px', borderRadius: 30, fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                    background: filter === cat ? '#c9a84c' : 'rgba(255,255,255,0.03)',
+                    color: filter === cat ? '#000' : 'rgba(255,255,255,0.6)',
+                    border: '1px solid ' + (filter === cat ? '#c9a84c' : 'rgba(255,255,255,0.08)'),
+                    transition: 'all 0.3s',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
         </header>
 
         {filteredSites.length === 0 ? (

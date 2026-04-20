@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import CustomDropdown from '../../components/CustomDropdown';
 
 // Helper type for Web Speech API
 declare global {
@@ -20,6 +21,15 @@ export default function TranslatorPage() {
   const [isTranslating, setIsTranslating] = useState(false);
 
   const recognitionRef = useRef<any>(null);
+
+  const langOptions = [
+    { value: 'English', label: 'English', icon: '🇺🇸' },
+    { value: 'Hindi', label: 'Hindi', icon: '🇮🇳' },
+    { value: 'Tamil', label: 'Tamil', icon: '🇮🇳' },
+    { value: 'Bengali', label: 'Bengali', icon: '🇮🇳' },
+    { value: 'French', label: 'French', icon: '🇫🇷' },
+    { value: 'German', label: 'German', icon: '🇩🇪' },
+  ];
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -98,13 +108,15 @@ export default function TranslatorPage() {
       
       {/* Top Half: Local (Inverted for easy reading if facing phone flat) */}
       <div style={{ flex: 1, background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)', position: 'relative', display: 'flex', flexDirection: 'column', padding: 32, transform: 'rotate(180deg)', borderBottom: '2px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: 0.5 }}>
-          <div style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: "'Outfit', sans-serif" }}>Local Guide</div>
-          <select value={localLang} onChange={e => setLocalLang(e.target.value)} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '4px 8px', borderRadius: 4, fontFamily: "'Outfit', sans-serif" }}>
-            <option value="Hindi">Hindi</option>
-            <option value="Tamil">Tamil</option>
-            <option value="Bengali">Bengali</option>
-          </select>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 50 }}>
+          <div style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: "'Outfit', sans-serif", opacity: 0.5 }}>Local Guide</div>
+          <div style={{ width: 140 }}>
+            <CustomDropdown 
+              options={langOptions.filter(o => ['Hindi', 'Tamil', 'Bengali'].includes(o.value))}
+              value={localLang}
+              onChange={setLocalLang}
+            />
+          </div>
         </div>
         
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -140,13 +152,15 @@ export default function TranslatorPage() {
 
       {/* Bottom Half: Tourist */}
       <div style={{ flex: 1, background: 'linear-gradient(135deg, rgba(201,168,76,0.15) 0%, rgba(10,10,10,1) 100%)', position: 'relative', display: 'flex', flexDirection: 'column', padding: 32 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 50 }}>
           <div style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: "'Outfit', sans-serif", color: '#c9a84c' }}>You (Tourist)</div>
-          <select value={touristLang} onChange={e => setTouristLang(e.target.value)} style={{ background: 'transparent', border: '1px solid rgba(201,168,76,0.3)', color: '#c9a84c', padding: '4px 8px', borderRadius: 4, fontFamily: "'Outfit', sans-serif" }}>
-            <option value="English">English</option>
-            <option value="French">French</option>
-            <option value="German">German</option>
-          </select>
+          <div style={{ width: 140 }}>
+            <CustomDropdown 
+              options={langOptions.filter(o => ['English', 'French', 'German'].includes(o.value))}
+              value={touristLang}
+              onChange={setTouristLang}
+            />
+          </div>
         </div>
 
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
